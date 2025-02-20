@@ -1,6 +1,7 @@
 import {Request} from 'express'
 import { ConcernDataType } from '../model/shared/concern.model';
 import { MeetingUserType } from '../model/shared/meeting.model';
+import { TechnologyType } from '../model/admin/technology';
 export type basicType={
     email:string;
     password : string;
@@ -74,4 +75,9 @@ export interface MonthlyProfitResult {
   export interface MeetingReportType{
     totalMeetings: number,
     scheduledMeeting: number
+  }
+
+  export interface TechnologyOutput{
+    technologies : TechnologyType[],
+    totalRecords: number
   }
