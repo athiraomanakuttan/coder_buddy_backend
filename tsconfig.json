@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "rootDir": "./src",  
+    "outDir": "./dist",  
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]  
+  },
+  "include": ["src/**/*", "types/**/*.d.ts"],  
+  "exclude": ["node_modules", "dist"]  
+}
