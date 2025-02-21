@@ -20,6 +20,10 @@ class TechnologyService implements ITechnologyService{
     async getAllTechnologies(page: number = 1, limit: number = 10): Promise<TechnologyOutput | null> {
         return this._technologyRepository.getAllTechnologies(page,limit)
     }
+
+    async updateTechnologies(id: string, data: TechnologyType): Promise<TechnologyType | null> {
+        return this._technologyRepository.updateTechnology(id,data)
+    }
 }
 
 export default TechnologyService

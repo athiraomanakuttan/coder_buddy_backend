@@ -19,6 +19,11 @@ class TechnologyRepository implements ITechnology{
         const totalRecords = await Technology.countDocuments()
         return {technologies: data, totalRecords}
     }
+
+    async updateTechnology(id: string,data: TechnologyType): Promise<TechnologyType | null> {
+        const updatedData = await Technology.findOneAndUpdate({_id:id},{$set:data},{new:true})
+        return updatedData 
+    }
 }
 
 export default TechnologyRepository

@@ -38,6 +38,17 @@ class TechnologyController{
             res.status(500).json({status: false, message: "error while fetching data"})
         }
     }
+
+    async updateTechnology(req:Request, res:Response):Promise<void>{
+        const {id,...data} = req.body
+        try {
+            const updatedData = await this._technolgyService.updateTechnologies(id,data)
+             if(updatedData)
+                res.status(200).json({status: true, message:"updated sucessfully",data:updatedData})
+        } catch (error) {
+            res.status(500).json({status: false, message:"unable to update the data"})
+        }
+    }
 }
 
 export default TechnologyController

@@ -63,5 +63,7 @@ router.get('/get-dasboard-data', authenticationMiddleware as any, (req,res)=> re
 
 router.post('/create-technology', authenticationMiddleware as any, (req,res)=>technologyController.createTechnoloy(req,res))
 router.get('/get-technology', authenticationMiddleware as any, (req,res)=> technologyController.getAllTechnologies(req,res))
+router.put('/update-technology', authenticationMiddleware as any, (req,res)=> technologyController.updateTechnology(req,res))
+
 
 export default router;
