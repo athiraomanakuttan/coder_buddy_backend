@@ -1,3 +1,4 @@
+import { TechnologyType } from "../../model/admin/technology";
 import { ExpertDocument } from "../../model/expert/expertModel";
 import { PostType } from "../../model/user/postModel";
 import { UserType } from "../../model/user/userModel";
@@ -25,6 +26,7 @@ interface UserRepository {
     getPostReport(userId: string):Promise<MonthlyUserPostReportType[] | null>
     getPostCount(userId: string):Promise<PostCountType | null>
     getMeetingDetails(userId: string):Promise<MeetingCountType | null>
+    getAllTechnologies():Promise<TechnologyType[] | null>
 }
 
 export default UserRepository;

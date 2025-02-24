@@ -342,6 +342,15 @@ class UserController {
       res.status(500).json({status: false, message:"Error while fetching Data"})
     }
   }
+
+  async getAllTechnologies(req:Request, res:Response):Promise<void>{
+    try {
+      const data = await this.userService.getAllTechnologies()
+      res.status(200).json({status: true, message:"data fetched sucssfully", data})
+    } catch (error) {
+      res.status(500).json({status: false, message:"unable to get the data"})
+    }
+  }
 }
 
 export default UserController;

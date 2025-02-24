@@ -4,6 +4,7 @@ import { PostType } from "../../../model/user/postModel";
 import { ExpertDocument } from "../../../model/expert/expertModel";
 import IUserService from "../IUserService";
 import { MeetingCountType, MonthlyUserPostReportType, PostCountType } from "../../../types/type";
+import { TechnologyType } from "../../../model/admin/technology";
 
 class UserService implements IUserService{
     private userRepository:UserRepository;
@@ -93,6 +94,9 @@ class UserService implements IUserService{
         return data
     }
 
+    async getAllTechnologies(): Promise<TechnologyType[] | null> {
+        return this.userRepository.getAllTechnologies()
+    }
 }
 
 export default UserService;

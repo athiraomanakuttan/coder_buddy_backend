@@ -5,6 +5,7 @@ import Expert , { ExpertDocument } from "../../../model/expert/expertModel";
 import { MeetingCountType, MonthlyUserPostReportType, PostCountType } from "../../../types/type";
 import { MeetingUser } from "../../../model/shared/meeting.model";
 import { count } from "console";
+import { Technology, TechnologyType } from "../../../model/admin/technology";
 
 class UserRepositoryImplementation implements UserRepository{
     async createUser(user: UserType): Promise<UserType> {
@@ -147,7 +148,7 @@ class UserRepositoryImplementation implements UserRepository{
                         }
                     }
                 },
-                { $sort: {  _id: -1 } },
+                { $sort: {  _id : -1 } },
                 {
                     $project: {
                         _id: 1,
@@ -284,6 +285,13 @@ class UserRepositoryImplementation implements UserRepository{
         })
         return { totalMeetings , scheduledMeeting}
     }
+
+    async getAllTechnologies(): Promise<TechnologyType[] | null> {
+        const data = await Technology.find({status:1}).sort({createdAt:-1})
+        return data
+    }
+
+     
 }
 
 export default UserRepositoryImplementation;

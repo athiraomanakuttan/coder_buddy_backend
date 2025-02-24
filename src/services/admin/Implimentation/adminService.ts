@@ -1,7 +1,7 @@
 import { ExpertDocument } from "../../../model/expert/expertModel";
 import { User, UserType } from "../../../model/user/userModel";
 import AdminRepository from "../../../repositories/admin/adminRepository";
-import { basicType, MonthlyAdminProfitReport } from "../../../types/type";
+import { AdminTransactionOutput, basicType, MonthlyAdminProfitReport } from "../../../types/type";
 import IAdminService from "../IAdminService";
 
 class AdminService implements IAdminService {
@@ -107,6 +107,10 @@ class AdminService implements IAdminService {
 
     async getTotalProfit(): Promise<number | null> {
         return await this.adminRepository.getTotalProfit()
+    }
+
+    async getWalletData(): Promise<AdminTransactionOutput | null> {
+        return await this.adminRepository.getWalletData()
     }
 }
 export default AdminService;

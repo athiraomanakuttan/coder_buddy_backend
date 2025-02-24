@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface AdminTransactionType {
+export interface AdminTransactionType {
     paymentId: string,
     amount: number,
     dateTime : string | Date
@@ -10,7 +10,6 @@ interface AdminWalletDataType {
     amount: number,
     transaction:AdminTransactionType[]
 }
-
 
 const walletSchema = new mongoose.Schema<AdminWalletDataType>({
     expertId: {

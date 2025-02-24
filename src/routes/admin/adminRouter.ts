@@ -18,6 +18,7 @@ import ReportController from '../../controller/admin/reportController';
 import TechnologyController from '../../controller/admin/technologyController';
 
 
+
 const router = Router();
 
 
@@ -64,6 +65,7 @@ router.get('/get-dasboard-data', authenticationMiddleware as any, (req,res)=> re
 router.post('/create-technology', authenticationMiddleware as any, (req,res)=>technologyController.createTechnoloy(req,res))
 router.get('/get-technology', authenticationMiddleware as any, (req,res)=> technologyController.getAllTechnologies(req,res))
 router.put('/update-technology', authenticationMiddleware as any, (req,res)=> technologyController.updateTechnology(req,res))
+router.get("/get-wallet-data", authenticationMiddleware as any, (req, res)=> adminController.getWalletData(req,res))
 
 
 export default router;

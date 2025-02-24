@@ -2,8 +2,8 @@ import { User, UserType } from "../../../model/user/userModel";
 import Expert, { ExpertDocument } from "../../../model/expert/expertModel";
 import AdminRepository from "../../admin/adminRepository";
 import AdminService from "../../../services/admin/Implimentation/adminService";
-import { MonthlyAdminProfitReport, MonthlyProfitResult } from "../../../types/type";
-import { AdminWallet } from "../../../model/admin/adminWallet";
+import { AdminTransactionOutput, MonthlyAdminProfitReport, MonthlyProfitResult } from "../../../types/type";
+import { AdminTransactionType, AdminWallet } from "../../../model/admin/adminWallet";
 
 class AdminRepositoryImplimentation implements AdminRepository{
     async getUserDetails(skip: number = 0, limit: number = 10): Promise<UserType[]> {
@@ -109,7 +109,28 @@ async getTotalProfit(): Promise<number | null> {
     return result.length > 0 ? result[0].sum : 0;
 }
 
- 
+async getWalletData(): Promise<AdminTransactionOutput | null> {
+    try {
+        const result = await AdminWallet.aggregate([
+            { $group: { _id: null, sum: { $sum: "$amount" } } }
+        ]);
+        const amount = result.length > 0 ? result[0].sum : 0;
+
+        const data = await AdminWallet.find({}, { transaction: 1, _id: 0 });
+        const transaction: AdminTransactionType[] = [];
+
+        data.forEach((trans) => {
+            transaction.push(...trans.transaction); // ✅ Correctly appends transactions
+        });
+
+        console.log("transaction", transaction);
+        return { amount, transaction };
+    } catch (error) {
+        console.error("Error fetching wallet data:", error);
+        return null;
+    }
+}
+
 
 }
 

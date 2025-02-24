@@ -41,4 +41,7 @@ router.get('/expert-profile/:id',authenticationMiddleware as any , (req,res)=>pr
 
 router.get('/get-post-report', authenticationMiddleware as any, (req,res)=> postController.getPostReport(req,res))
 router.get('/get-dashboard-report', authenticationMiddleware as any, (req,res)=> userController.getDashboardReport(req,res) ) 
+
+router.get("/get-all-technologies", authenticationMiddleware as any , (req,res)=> userController.getAllTechnologies(req,res))
+
 export default router;

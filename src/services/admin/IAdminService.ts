@@ -1,6 +1,6 @@
 import { ExpertDocument } from "../../model/expert/expertModel";
 import { UserType } from "../../model/user/userModel";
-import { basicType, MonthlyAdminProfitReport } from "../../types/type";
+import { AdminTransactionOutput, basicType, MonthlyAdminProfitReport } from "../../types/type";
 
 interface IAdminService {
 adminSignup(userData: basicType,adminData: basicType):{ status: boolean; message: string }
@@ -16,6 +16,7 @@ getMonthlyProfitReport(year:number):Promise<MonthlyAdminProfitReport[] | null>
 getUserCount():Promise<number | null>
 getExpertCount():Promise<number | null>
 getTotalProfit():Promise<number | null>
+getWalletData():Promise<AdminTransactionOutput | null>
 }
 
 export default IAdminService
