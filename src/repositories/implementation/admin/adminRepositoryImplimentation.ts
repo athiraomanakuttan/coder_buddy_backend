@@ -115,15 +115,12 @@ async getWalletData(): Promise<AdminTransactionOutput | null> {
             { $group: { _id: null, sum: { $sum: "$amount" } } }
         ]);
         const amount = result.length > 0 ? result[0].sum : 0;
-
         const data = await AdminWallet.find({}, { transaction: 1, _id: 0 });
         const transaction: AdminTransactionType[] = [];
-
         data.forEach((trans) => {
-            transaction.push(...trans.transaction); // ✅ Correctly appends transactions
+            transaction.push(...trans.transaction); 
         });
 
-        console.log("transaction", transaction);
         return { amount, transaction };
     } catch (error) {
         console.error("Error fetching wallet data:", error);
