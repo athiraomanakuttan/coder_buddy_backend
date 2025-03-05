@@ -28,15 +28,17 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(bodyParser.json());
 
+const allowedOrigins = process.env.CORS_ORIGINS 
+    ? process.env.CORS_ORIGINS.split(",") 
+    : [];
+
 app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "https://api.razorpay.com"
-    ],
+    origin: allowedOrigins.length > 0 ? allowedOrigins : "*", // Fallback to "*" if empty
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Payout-Idempotency']
 }));
+
 
 app.use(
     session({
