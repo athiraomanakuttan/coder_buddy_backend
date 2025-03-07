@@ -27,8 +27,8 @@ class AdminController{
             res.status(400).json({status:false, message:checkCredentails.message})
             return
         }
-        const accessToken =  JwtUtility.generateAccessToken({email})
-        const refreshToken =  JwtUtility.generateRefreshToken({email})
+        const accessToken =  JwtUtility.generateAccessToken({email,role:"admin"})
+        const refreshToken =  JwtUtility.generateRefreshToken({email,role:"admin"})
         res.cookie('refreshToken',refreshToken,{ 
             httpOnly: true,
             secure: false,

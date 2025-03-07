@@ -5,11 +5,13 @@ export interface CustomRequest extends Request {
   user?: string;
   token?: string;
   id?: String;
+  role ?: string
 }
 
 interface DecodedToken {
   email: string;
   id:string;
+  role?: string
 }
 
 const authenticationMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -25,6 +27,7 @@ const authenticationMiddleware = async (req: CustomRequest, res: Response, next:
     const decoded = jwt.verify(token, accessSecret) as DecodedToken;
     req.user = decoded.email;
     req.id = decoded.id;
+    req.role = decoded?.role ?? ""
     next();
   } catch (error) {
     console.log("error in jwt", error)
@@ -37,5 +40,6 @@ const authenticationMiddleware = async (req: CustomRequest, res: Response, next:
     }
   }
 };
+
 
 export default authenticationMiddleware;
