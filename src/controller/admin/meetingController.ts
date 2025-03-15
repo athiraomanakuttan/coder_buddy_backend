@@ -1,11 +1,11 @@
 import { Request , Response } from "express";
-import MeetingService from "../../services/admin/Implimentation/meetingService";
 import { v4 as uuidv4 } from "uuid";
 import { MeetingType } from "../../model/admin/meetingModel";
 import AdminService from "../../services/admin/Implimentation/adminService";
 import { ExpertDocument } from "../../model/expert/expertModel";
 import IMeetingService from "../../services/admin/IMeetingService";
 import IAdminService from "../../services/admin/IAdminService";
+import { STATUS_CODES } from "../../constants/statusCode";
 class MeetingController{
     private meetingService : IMeetingService;
     private adminService : IAdminService;
@@ -24,15 +24,15 @@ class MeetingController{
                 if(createMeet){
                     const isMeetingScheduled = 1;
                     const updateExpert =  await this.adminService.updateExpertById(expertId,{isMeetingScheduled} as ExpertDocument)
-                    res.status(200).json({status: true, message: "Meeting created successfully", data:createMeet})
+                    res.status(STATUS_CODES.OK).json({status: true, message: "Meeting created successfully", data:createMeet})
                     return;
                 }
                 else
-                res.status(400).json({status: true, message: "Meeting created successfully"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message: "Meeting created successfully"})
 
         } catch (error) {
             console.log(error)
-            res.status(500).json({ status: false, message:"unable to create meeting"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to create meeting"})
         }
 
     }
@@ -44,13 +44,13 @@ class MeetingController{
             if(meetingData){
                 const totalCount = await this.meetingService.getMeetingCount(status)
                 const pageCount = Math.ceil(totalCount/10)
-                res.status(200).json({status: true, message : "data Fetched sucessfully", data:meetingData, count:totalCount, totalPages: pageCount})
+                res.status(STATUS_CODES.OK).json({status: true, message : "data Fetched sucessfully", data:meetingData, count:totalCount, totalPages: pageCount})
                 return
             }
-           res.status(400).json({status : false , message : "unable to fetch data"}) 
+           res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : "unable to fetch data"}) 
         } catch (error:any) {
             console.log(error)
-           res.status(500).json({status : false , message : "unable to fetch data"}) 
+           res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : "unable to fetch data"}) 
         }
     }   
 
@@ -61,14 +61,14 @@ class MeetingController{
             if(updateExpert){
                 const updateMeeting  =  await this.meetingService.updateMeetingByExpertId(expertId,meetingId)
                 if(updateMeeting){
-                    res.status(200).json({status: true, message : "Expert approved"})
+                    res.status(STATUS_CODES.OK).json({status: true, message : "Expert approved"})
                     return;
                 }
             }
-            res.status(400).json({status: true, message : "unable to update the expert status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : "unable to update the expert status"})
         } catch (error) {
             console.log(error)
-            res.status(500).json({status:false, message:"unable t update the status "})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable t update the status "})
         }
     }
     

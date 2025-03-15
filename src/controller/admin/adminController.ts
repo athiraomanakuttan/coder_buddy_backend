@@ -3,6 +3,7 @@ import JwtUtility from "../../utils/jwtUtility"
 import { UserType } from "../../model/user/userModel"
 import { ExpertDocument } from "../../model/expert/expertModel"
 import IAdminService from "../../services/admin/IAdminService"
+import { STATUS_CODES } from "../../constants/statusCode"
 
 class AdminController{
     private adminService: IAdminService  
@@ -15,16 +16,16 @@ class AdminController{
         const adminEmail = process.env.ADMIN_EMAIL
         const adminPassword = process.env.ADMIN_PASSWORD
         if(!email || !password){
-            res.status(400).json({status:false, message:"email or password can not be empty"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"email or password can not be empty"})
             return
         }
         else if(!adminEmail || !adminPassword ){
-            res.status(400).json({status:false, message:"unable to login. please try again"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"unable to login. please try again"})
             return
         }
         const checkCredentails = this.adminService.adminSignup({email,password},{email:adminEmail,password:adminPassword})
         if(!checkCredentails.status){
-            res.status(400).json({status:false, message:checkCredentails.message})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:checkCredentails.message})
             return
         }
         const accessToken =  JwtUtility.generateAccessToken({email,role:"admin"})
@@ -33,7 +34,7 @@ class AdminController{
             httpOnly: true,
             secure: false,
             maxAge: 1 * 60 * 60 * 1000,})
-        res.status(200).json({status: true,message:"login successfull", accessToken})
+        res.status(STATUS_CODES.OK).json({status: true,message:"login successfull", accessToken})
     }
 
     async getUserData(req: Request, res: Response): Promise<void> {
@@ -45,7 +46,7 @@ class AdminController{
             const totalUsers = await this.adminService.countTotalUsers(); 
             const userData = await this.adminService.getUserData(skip, limit);
 
-            res.status(200).json({ 
+            res.status(STATUS_CODES.OK).json({ 
                 status: true, 
                 message: "Data fetched successfully", 
                 data: userData,
@@ -59,7 +60,7 @@ class AdminController{
             });
         } catch (error) {
             console.log(error);
-            res.status(500).json({
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
                 message: "Error while fetching data", 
                 data: null
@@ -80,7 +81,7 @@ class AdminController{
     
             const totalPages = Math.ceil(total / limit);
     
-            res.status(200).json({ 
+            res.status(STATUS_CODES.OK).json({ 
                 status: true, 
                 message: "Data fetched successfully", 
                 data: {
@@ -95,7 +96,7 @@ class AdminController{
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
                 message: "Error while fetching data", 
                 data: null
@@ -106,22 +107,22 @@ class AdminController{
     async changeUserStatus(req:Request , res:Response):Promise<void>{
         const {id, status} = req.body
         if(!id || status===undefined){
-            res.status(400).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : "unable to update the user status"})
             return;
         }
         const checkUser =  await this.adminService.getUserById(id)
         if(!checkUser){
-            res.status(400).json({status:false, message:"user not found"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user not found"})
             return
         }
         try {
             const data ={ status: status} as UserType
             const updateUser =  await this.adminService.updateUserById(id,data)
             console.log("updateUser",updateUser)
-            res.status(200).json({status:true, message:"user status updated successfully"})
+            res.status(STATUS_CODES.OK).json({status:true, message:"user status updated successfully"})
         } catch (error) {
             console.log("error while updating user",error);
-            res.status(500).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : "unable to update the user status"})
         }
 
     }
@@ -130,10 +131,10 @@ class AdminController{
         const { id } = req.params
         try {
             const expertData =  await this.adminService.getExpertById(id)
-            res.status(200).json({status: true, message:"data fetched successfully", data:expertData})
+            res.status(STATUS_CODES.OK).json({status: true, message:"data fetched successfully", data:expertData})
         } catch (error) {
             console.log(error)
-            res.status(500).json({status: false, message:"error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
 
         }
     }
@@ -141,16 +142,16 @@ class AdminController{
     async changeExpertStatus(req:Request, res:Response):Promise<void>{
         const {id} = req.body
         if(!id ){
-            res.status(400).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : "unable to update the user status"})
             return;
         }
         try {
             const data = {status : 0 } as ExpertDocument 
             const updateExpert = await this.adminService.updateExpertById(id,data) 
-            res.status(200).json({status:true, message:"expert rejected",data:updateExpert})
+            res.status(STATUS_CODES.OK).json({status:true, message:"expert rejected",data:updateExpert})
         } catch (error) {
             console.log(error)
-            res.status(500).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : "unable to update the user status"})
 
         }
     }
@@ -159,16 +160,16 @@ class AdminController{
     async enableDisableStatus(req: Request,res: Response):Promise<void>{
         const {expertId, status}= req.body
         if(!expertId || Number(status)>1 || Number(status)<0){
-            res.status(400).json({ status: false, message:"expert id is empty or invalid status" })
+            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:"expert id is empty or invalid status" })
             return
         }
 
         try {
             const changedStatus =  await this.adminService.updateExpertStatus(expertId, Number(status))
             if(changedStatus)
-                res.status(200).json({status: true, message:"status updated", data:changedStatus})
+                res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data:changedStatus})
         } catch (error) {
-            res.status(500).json({ status: false, message:"unable to change status" })
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to change status" })
             
         }
     }
@@ -179,10 +180,10 @@ class AdminController{
         try {
             const userData =  await this.adminService.getUserById(userId)
             if(userData)
-                res.status(200).json({status:true, message:"user data fetched sucessfully", data:userData})
+                res.status(STATUS_CODES.OK).json({status:true, message:"user data fetched sucessfully", data:userData})
         } catch (error) {
             console.log("error while fetcing user profile")
-            res.status(500).json({status: false, message:"unable to fetch user data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to fetch user data"})
         }
     }    
     
@@ -190,18 +191,18 @@ class AdminController{
         const {year} =  req.query
         try {
             const profitReport = await this.adminService.getMonthlyProfitReport(Number(year) ?? new Date().getFullYear())
-            res.status(200).json({status: true, data: profitReport})
+            res.status(STATUS_CODES.OK).json({status: true, data: profitReport})
         } catch (error) {
-            res.status(500).json({status: false, message:"unable to fetch the data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to fetch the data"})
         }
     }
 
     async getWalletData(req:Request, res:Response):Promise<void>{
         try {
             const data = await this.adminService.getWalletData()
-            res.status(200).json({status: true, message: "data fetched sucessfully", data})
+            res.status(STATUS_CODES.OK).json({status: true, message: "data fetched sucessfully", data})
         } catch (error) {
-            res.status(500).json({status: false, message:"unable to get the data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to get the data"})
         }
     }
 }

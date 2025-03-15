@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserService from "../../services/user/Implimentation/userServices";
 import { UserType } from "../../model/user/userModel";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
+import {STATUS_CODES } from '../../constants/statusCode'
 
 class ProfileController {
   private profileService: UserService;
@@ -14,13 +15,13 @@ class ProfileController {
       try {
         const userData = await this.profileService.findByEmail(email);
         if (userData?.status === 1) {
-          res.status(200).json({
+          res.status(STATUS_CODES.OK).json({
             status: true,
             message: "User data fetched successfully",
             data: userData,
           });
         } else {
-          res.status(400).json({
+          res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
             message: "User is blocked.",
             data: null,
@@ -28,14 +29,14 @@ class ProfileController {
         }
       } catch (error) {
         console.error("Error retrieving profile:", error);
-        res.status(500).json({
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
           status: false,
           message: "Failed to fetch profile",
           data: null,
         });
       }
     } else {
-      res.status(400).json({
+      res.status(STATUS_CODES.BAD_REQUEST).json({
         status: false,
         message: "User is not authorized",
         data: null,
@@ -48,7 +49,7 @@ class ProfileController {
     const file  = req.file
     if (!_id) {
       res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({
           status: false,
           message: "User is not authorized. Please log in again.",
@@ -105,7 +106,7 @@ class ProfileController {
 
       if (updateUser) {
         res
-          .status(200)
+          .status(STATUS_CODES.OK)
           .json({
             status: true,
             message: "Profile updated successfully",
@@ -113,13 +114,13 @@ class ProfileController {
           });
       } else {
         res
-          .status(404)
+          .status(STATUS_CODES.NOT_FOUND)
           .json({ status: false, message: "User not found", data: null });
       }
     } catch (error) {
       console.error("Error while updating", error);
       res
-        .status(500)
+        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
         .json({ status: false, message: "Internal server error", data: null });
     }
   }
@@ -128,18 +129,18 @@ class ProfileController {
     const {id} = req.params
     try {
       if(!id){
-        res.status(400).json({status:false, message:"Expert id is empty"});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"Expert id is empty"});
         return
       }
       const expertData =  await this.profileService.getExpertById(id)
       if(expertData){
-        res.status(200).json({status: true , message:"profile fetched successfully", data : expertData})
+        res.status(STATUS_CODES.OK).json({status: true , message:"profile fetched successfully", data : expertData})
         return
       }
-      res.status(400).json({status: false , message:"User is not active with this id"})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:"User is not active with this id"})
 
     } catch (error) {
-      res.status(500).json({status:false, message:"error fetching profiledata"});
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"error fetching profiledata"});
     }
   }
   

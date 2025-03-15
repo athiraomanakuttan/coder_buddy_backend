@@ -1,6 +1,7 @@
 import UserService from "../../services/user/Implimentation/userServices";
 import { Request, Response } from "express";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
+import { STATUS_CODES } from "../../constants/statusCode";
 export interface CustomRequest extends Request {
     id?: string; 
   }
@@ -78,7 +79,7 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
         const userDetails = await this.postService.getUserPost( userId, status, pageNumber,pageSize)
         console.log("userDetails",userDetails)
         if (userDetails) {
-            res.status(200).json({
+            res.status(STATUS_CODES.OK).json({
                 status: true, 
                 message: "Data fetched successfully", 
                 data: userDetails.posts,
@@ -105,7 +106,7 @@ async updatePostStatus(req:CustomRequest, res: Response):Promise<void>{
         const postStatus = Number(status)
         const updateStatus =  await this.postService.updatePostStatus(userId,postId, postStatus)
         if(updateStatus){
-            res.status(200).json({status: true, message:"post updated successfully"})
+            res.status(STATUS_CODES.OK).json({status: true, message:"post updated successfully"})
         }
     } catch (error) {
         console.log("error while updating post status", error)
@@ -129,7 +130,7 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
         const userDetails = await this.postService.getUserPost( userId, status, pageNumber,pageSize ,search)
         console.log("userDetails",userDetails)
         if (userDetails) {
-            res.status(200).json({
+            res.status(STATUS_CODES.OK).json({
                 status: true, 
                 message: "Data fetched successfully", 
                 data: userDetails.posts,
@@ -185,7 +186,7 @@ async updatePost(req: CustomRequest, res:Response):Promise<void>{
        try {
         const updatedData =  await this.postService.updatePostDetails(data._id, postData)
         if(updatedData)
-         res.status(200).json({status: true, message:"post updated"})
+         res.status(STATUS_CODES.OK).json({status: true, message:"post updated"})
        } catch (error) {
         res.status(500).json({status: false, message:"unable to update post"})
         
@@ -201,7 +202,7 @@ async getPostReport(req:CustomRequest,res: Response):Promise<void>{
     try {
       const postReport  = await this.postService.getUserPostReport(userId)
       if(postReport){
-        res.status(200).json({status: true, message:"fetched data sucessfully", data:postReport})
+        res.status(STATUS_CODES.OK).json({status: true, message:"fetched data sucessfully", data:postReport})
       }
     } catch (error) {
       console.log("error while ftching report", error)

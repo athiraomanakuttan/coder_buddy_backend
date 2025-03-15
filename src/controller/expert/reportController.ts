@@ -2,6 +2,7 @@ import IMeetingService from "../../services/expert/IMeetingService"
 import { Response } from "express"
 import { CustomType } from "../../types/type"
 import IPaymentService from "../../services/expert/IPaymentService"
+import { STATUS_CODES } from "../../constants/statusCode"
 
 class ReportController{
 private _meetingService : IMeetingService
@@ -22,9 +23,9 @@ async getExpertReport(req:CustomType, res:Response):Promise<void>{
         const meetingData = await this._meetingService.getMeetingDetails(expertId)
         const meetingRating = await this._meetingService.getExpertRating(expertId)
         const walletBalance = await this._paymentService.getWalletBalance(expertId)
-        res.status(200).json({status: true, message:"data fetched sucessfull", data :{...meetingData, meetingRating:meetingRating?.toFixed(1), walletBalance}})
+        res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data :{...meetingData, meetingRating:meetingRating?.toFixed(1), walletBalance}})
     } catch (error) {
-        res.status(500).json({status: false, message:"error while fetching data"})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
     }
 }
 }

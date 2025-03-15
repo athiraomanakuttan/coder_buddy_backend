@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import IPaymentService from "../../services/expert/IPaymentService";
 import axios from "axios";
 import IExpertService from "../../services/expert/IExpertService";
+import { STATUS_CODES } from "../../constants/statusCode";
 
 
 const razorpay = new Razorpay({
@@ -26,23 +27,23 @@ class PaymentController{
         const expertId = req.id
         const {title , amount , userId, postId} = req.body
         if(!title || !userId || !expertId){
-             res.status(400).json({status:false,message:"unable to create meeting link"})
+             res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create meeting link"})
              return 
         }
         if(!amount || Number(amount)>10000 || Number(amount)<=0){
-            res.status(400).json({status:false,message:"Amount range should be between 1 - 10000"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"Amount range should be between 1 - 10000"})
             return
         }
         try {
             const response =  await this.paymentService.createMeetingLink(title,Number(amount),userId,expertId, postId)
             if(!response){
-                res.status(400).json({status:false,message:"unable to create meeting link"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create meeting link"})
                 return
             }
-            res.status(200).json({status:true,message:"meeting link created sucessfully", data:response})
+            res.status(STATUS_CODES.OK).json({status:true,message:"meeting link created sucessfully", data:response})
         } catch (error) {
             console.log("error", error)
-            res.status(500).json({status:false,message:"unable to create meeting link"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:"unable to create meeting link"})
         }   
     }
 
@@ -51,16 +52,16 @@ class PaymentController{
         const {status ,page, count}= req.query
         
         if(!userId){
-            res.status(400).json({status:false, message:"user id is empty try again"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user id is empty try again"})
             return
         }
         try {
             const paymentDetails =  await this.paymentService.getPaymentList(userId, Number(status), Number(page), Number(count))
             if(paymentDetails)
-            res.status(200).json({status:true, message:"data fetched sucessfully", data:paymentDetails})
+            res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:paymentDetails})
                 
         } catch (error) {
-            res.status(500).json({status:false, message:"unable to fetch data "})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch data "})
             
         }
     }
@@ -70,10 +71,10 @@ class PaymentController{
         try {
             const paymentDetails = await this.paymentService.getPaymentById(id) 
             if(paymentDetails){
-                res.status(200).json({status:true, message:"data fetched sucessfull",data:paymentDetails})
+                res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfull",data:paymentDetails})
             }
         } catch (error) {
-            res.status(500).json({status:false, message:"unable to fetch details"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch details"})
             
         }
     }
@@ -91,13 +92,13 @@ class PaymentController{
     
             const order = await razorpay.orders.create(options);
     
-            res.status(200).json({
+            res.status(STATUS_CODES.OK).json({
                 id: order.id,
                 amount: order.amount,
                 key: process.env.RAZORPAY_KEY_ID
             });
         } catch (error) {
-            res.status(500).json({ error: 'Order creation failed' });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'Order creation failed' });
         }
     }
     
@@ -143,13 +144,13 @@ class PaymentController{
                
             }
     
-            res.status(200).json({
+            res.status(STATUS_CODES.OK).json({
                 status: 'success',
                 message: 'Payment verified successfully'
             });
         } else {
             await this.paymentService.updatePaymentById(paymentId, 0, null);
-            res.status(400).json({
+            res.status(STATUS_CODES.BAD_REQUEST).json({
                 status: 'failed',
                 message: 'Payment verification failed'
             });
@@ -162,13 +163,13 @@ class PaymentController{
         const expertId   =  req.id
         try {
             if(!expertId){
-                res.status(401).json({status: false, message: "expert id is empty"})
+                res.status(STATUS_CODES.UNAUTHORIZED).json({status: false, message: "expert id is empty"})
                 return;
             }
 
             const walletData = await this.paymentService.getWalletByExpertId(expertId)
             if(walletData){
-                res.status(200).json({status: true, message:"data fetched sucessfull", data:walletData})
+                res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data:walletData})
             }
         } catch (error) {
             
@@ -181,18 +182,18 @@ class PaymentController{
             const { amount, UPIid } = req.body;
     
             if (!expertId) {
-                res.status(400).json({ status: false, message: "Invalid user ID" });
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Invalid user ID" });
                 return;
             }
     
             const walletData = await this.paymentService.getWalletByExpertId(expertId);
             if (!walletData) {
-                res.status(400).json({ status: false, message: "Your wallet is empty" });
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Your wallet is empty" });
                 return;
             }
     
             if (amount <= 0 || amount > walletData.amount) {
-                res.status(400).json({ status: false, message: "Invalid amount" });
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Invalid amount" });
                 return;
             }
      
@@ -208,14 +209,14 @@ class PaymentController{
                 }]
             });
     
-            res.status(200).json({
+            res.status(STATUS_CODES.OK).json({
                 status: true,
                 message: "Test payout initiated successfully",
             });
     
         } catch (error: any) {
             console.error("Test Payout Error:", error.response?.data || error);
-            res.status(500).json({
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
                 message: error.response?.data?.message || "Something went wrong"
             });

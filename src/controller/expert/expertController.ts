@@ -7,6 +7,7 @@ import MailUtility from "../../utils/mailUtility";
 import OtpUtility from "../../utils/otpUtility";
 import IExpertService from "../../services/expert/IExpertService";
 import IUserService from "../../services/user/IUserService";
+import { STATUS_CODES } from "../../constants/statusCode";
 
 class ExpertController{ 
      private expertServece : IExpertService
@@ -20,13 +21,13 @@ class ExpertController{
         const { email, password} =  req.body;
         if(!email.trim() || !password.trim())
         {
-            res.status(400).json({ status: false ,  message:"email or password isnot in required format", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false ,  message:"email or password isnot in required format", data: null})
             return;
         }
         const existExpert = await this.expertServece.getExpertByEmail(email)
         if(existExpert && existExpert.status ===1)
         {
-            res.status(400).json({status: false ,  message:"user already exist. please signIn", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message:"user already exist. please signIn", data: null})
             return;
         }
         try {
@@ -37,9 +38,9 @@ class ExpertController{
             
                 const otp = await OtpUtility.otpGenerator()
                 const emailSend = await MailUtility.sendMail(email,otp,"Verifivation OTP")
-                res.status(200).json({status:true, message:"An otp has sent to your email", data : {otp,email}})
+                res.status(STATUS_CODES.OK).json({status:true, message:"An otp has sent to your email", data : {otp,email}})
         } catch (error) {
-            res.status(500).json({status: false, message:` some eroor occured:${error}`, data: null})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:` some eroor occured:${error}`, data: null})
         }
      }
 
@@ -47,22 +48,22 @@ class ExpertController{
         const {email,password} = req.body
         if(!email.trim() || !password.trim())
         {
-            res.status(400).json({status:false, message:"email and password is not in required format",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"email and password is not in required format",data:null});
             return;
         } 
         const existExpert =  await this.expertServece.getExpertByEmail(email)
         if(!existExpert || !existExpert.password)
         {
-            res.status(400).json({status:false, message:"user not found. please signup",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user not found. please signup",data:null});
             return;
         }else if(!existExpert.status){
-          res.status(403).json({status:false, message:"user is blocked",data:null});
+          res.status(STATUS_CODES.FORBIDDEN).json({status:false, message:"user is blocked",data:null});
           return;
         }
         const checkPassword = await PasswordUtils.comparePassword(password,existExpert.password)
         if(!checkPassword)
         {
-            res.status(400).json({status:false, message:"incorrect password",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"incorrect password",data:null});
             return;
         }
         else
@@ -75,26 +76,26 @@ class ExpertController{
               sameSite: "lax",
               maxAge: 1 * 60 * 60 * 1000,
             });
-            res.status(200).json({status:true, message:"Login successfull",data:{accessToken,existExpert}});
+            res.status(STATUS_CODES.OK).json({status:true, message:"Login successfull",data:{accessToken,existExpert}});
         }
      }
 
     async verifyOtp(req: Request, res: Response): Promise<void> {
         const {otp,storedOTP,storedEmail} = req.body;
         if (!otp) {
-          res.status(400).json({ message: "OTP is required" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP is required" });
           return;
         }
     
         
         if (!otp || !storedOTP || !storedEmail) {
-          res.status(400).json({ message: "OTP Timeout. Try again" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP Timeout. Try again" });
           return;
         }
         if (storedOTP === otp) {
           const currentUser = await this.expertServece.getExpertByEmail(storedEmail);
           if (!currentUser) {
-            res.status(404).json({ message: "User not found" });
+            res.status(STATUS_CODES.NOT_FOUND).json({ message: "User not found" });
             return;
           }
     
@@ -103,55 +104,55 @@ class ExpertController{
     
           if (updateUser) {
             res
-              .status(200)
+              .status(STATUS_CODES.OK)
               .json({ message: "OTP verified successfully", user: updateUser });
           } else {
-            res.status(500).json({ message: "Error updating user data" });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Error updating user data" });
           }
         } else {
-          res.status(400).json({ message: "Incorrect OTP. Please try again" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" });
         }
      }
      async forgotPassword(req: Request, res: Response):Promise<void>{
       const {email}= req.body;
       if(!email){
-        res.status(400).json({status: false, message : 'email id is required'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'email id is required'});
         return
       }
       try {
         const userExist = await this.expertServece.getExpertByEmail(email)
       if(!userExist){
-        res.status(400).json({status: false, message : 'User notfound. try again'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'User notfound. try again'});
         return
       }
       else if(userExist.status !== 1){
-        res.status(403).json({status: false, message : 'Your account is blocked'});
+        res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'Your account is blocked'});
         return
       }
       const otp = await OtpUtility.otpGenerator()
       const emailSend =  await MailUtility.sendMail(email,otp,"Reset Password")
       if(emailSend){
-        res.status(200).json({status: true, message : 'An OTP has send to you email',data:{email, otp}});
+        res.status(STATUS_CODES.OK).json({status: true, message : 'An OTP has send to you email',data:{email, otp}});
         return
       }
       } catch (error) {
         console.log(error)
-        res.status(500).json({status: false, message : 'something went wrong'});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : 'something went wrong'});
       }
      }
      async updatePassword (req:Request , res : Response):Promise<void>{
       const {email,password}= req.body;
       if(!email || !password){
-        res.status(400).json({status: false, message : 'user is not autherized'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'user is not autherized'});
       }
       try {
         const existeUser =  await this.expertServece.getExpertByEmail(email)
         if(!existeUser){
-          res.status(400).json({status: false, message : 'unbale to find the account please signup'});
+          res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'unbale to find the account please signup'});
           return
         }
         else if(existeUser.status !== 1){
-          res.status(403).json({status: false, message : 'your account is blocked'});
+          res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'your account is blocked'});
           return
         }
 
@@ -159,15 +160,15 @@ class ExpertController{
         const data = {password : hashPassword} as ExpertDocument;
         const updatePassword = await this.expertServece.updateExpert(existeUser._id, data)
         if(updatePassword){
-        res.status(200).json({status: true, message : 'password updated successfully'});
+        res.status(STATUS_CODES.OK).json({status: true, message : 'password updated successfully'});
           return 
         }
         else
-        res.status(400).json({status: false, message : 'unable to update password. try again'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'unable to update password. try again'});
 
       } catch (error) {
         console.log(error)
-        res.status(500).json({status: false, message : 'something went wrong'});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : 'something went wrong'});
       }
      }
 
@@ -175,7 +176,7 @@ class ExpertController{
       const { name, email, image } = await req.body;
     
     if (!email) {
-      res.status(400).json({ status: false, message: "invalid email id " });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "invalid email id " });
       return;
     } 
     try {
@@ -199,14 +200,14 @@ class ExpertController{
         sameSite: "lax",
         maxAge: 1 * 60 * 60 * 1000,
       });
-      res.status(200).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
+      res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
       return;
     }
-    res.status(500).json({status:false, message:"unable to signup. Try again"})
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
     
     } catch (error) {
       console.log("error occured during creating user", error)
-      res.status(500).json({status:false, message:"unable to signup. Try again"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
     }
      }
 
@@ -214,15 +215,15 @@ class ExpertController{
       const userId = req.params.id
       try {
         if(!userId){
-        res.status(400).json({ status: false, message:"user Id is empty"})
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:"user Id is empty"})
         return
         }
 
         const userData  =  await this._userService.getUserById(userId)
         if(userData)
-          res.status(200).json({status: true, message:"data fetched sucessfull", data: userData})
+          res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data: userData})
       } catch (error) {
-        res.status(500).json({ status: false, message:"unable to fetch user Data"})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to fetch user Data"})
       }
      }
 

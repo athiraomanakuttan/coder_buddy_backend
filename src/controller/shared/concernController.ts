@@ -4,6 +4,7 @@ import IConcernService from "../../services/shared/IConcernService"
 import { CustomType } from "../../types/type";
 import { ConcernDataType, MessageType } from "../../model/shared/concern.model";
 import { uploadImageToCloudinary, uploadVideoToCloudinary } from "../../utils/uploadImageToCloudinary ";
+import { STATUS_CODES } from "../../constants/statusCode";
 
 class ConcernController{
     private _concernService: IConcernService
@@ -17,11 +18,11 @@ class ConcernController{
         const file = req.file
         try {
             if(!userId){
-                res.status(400).json({status: false, message:"userId is empty"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"userId is empty"})
                 return
             }
             else if(!data.title || !data.description){
-                res.status(400).json({status: false, message:"Title or description is empty"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"Title or description is empty"})
                 return
             }
             if (file) {
@@ -50,11 +51,11 @@ class ConcernController{
 
             const newConcern =  await this._concernService.createConcern(concernData)
             if(newConcern){
-                res.status(200).json({status: false, message:"concer created sucessfully"})
+                res.status(STATUS_CODES.OK).json({status: false, message:"concer created sucessfully"})
             }
         } catch (error) {
             console.log("error", error)
-            res.status(500).json({status: false, message:"error while creating concern"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while creating concern"})
         }
     }
 
@@ -65,16 +66,16 @@ class ConcernController{
         const {status}= req.query
 
         if(!userId || Number(status)<0 || Number(status)>2){
-            res.status(400).json({status: false, message:"userId or status is empty"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"userId or status is empty"})
             return;
         }
         try {
             const concernData = await this._concernService.getUserConcers(userId,Number(status))
             if(concernData){
-                res.status(200).json({status: true, message:"data fetched suceesfully", data:concernData})
+                res.status(STATUS_CODES.OK).json({status: true, message:"data fetched suceesfully", data:concernData})
             }
         } catch (error) {
-            res.status(500).json({status: false, message:"unable to get the concern data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to get the concern data"})
             
         }
     }
@@ -84,9 +85,9 @@ class ConcernController{
         try {
             const data = {message: comment, userType } as MessageType
             const concernData = await this._concernService.createConcernReplay(data,meetingId)
-            res.status(200).json({status:true, message:"comment added sucessfully", data:concernData})
+            res.status(STATUS_CODES.OK).json({status:true, message:"comment added sucessfully", data:concernData})
         } catch (error) {
-            res.status(500).json({status: false, message:"error while adding replay"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while adding replay"})
         }
     }
     

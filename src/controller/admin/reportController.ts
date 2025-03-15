@@ -1,3 +1,4 @@
+import { STATUS_CODES } from "../../constants/statusCode"
 import IAdminService from "../../services/admin/IAdminService"
 import IConcernService from "../../services/admin/IConcernService"
 import IMeetingService from "../../services/admin/IMeetingService"
@@ -19,9 +20,9 @@ class ReportController {
             const scheduledMeeting = await this._meetingService.getScheduledMeeting()
             const openTicket = await this._concernService.getOpenTicketCount()
             const totalProfit = await this._adminService.getTotalProfit()
-            res.status(200).json({status: true, message:"data fetched sucessfully", data:{totalClient, totalExpert,totalProfit,scheduledMeeting,openTicket}})
+            res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfully", data:{totalClient, totalExpert,totalProfit,scheduledMeeting,openTicket}})
         } catch (error) {
-            res.status(500).json({status: false, message:"error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
         }
     }
 }

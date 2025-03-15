@@ -1,3 +1,4 @@
+import { STATUS_CODES } from "../../constants/statusCode"
 import ITechnologyService from "../../services/admin/ITechologyService"
 import { Request, Response } from "express"
 
@@ -11,20 +12,20 @@ class TechnologyController{
         const {title} = req.body
         try {
             if(!title.trim()){
-                res.status(400).json({status: false, message:"invalid input"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"invalid input"})
                 return
             }
             const techExist =  await this._technolgyService.getTechnologyByTitle(title)
             if(techExist){
-                res.status(409).json({status: false, message:"technology already exist"})
+                res.status(STATUS_CODES.CONFLICT).json({status: false, message:"technology already exist"})
                 return
             }
             const data =  await this._technolgyService.createTechnology(title)
             if(data){
-                res.status(200).json({status: true, message:"Create sucessfully"})
+                res.status(STATUS_CODES.OK).json({status: true, message:"Create sucessfully"})
             }
         } catch (error) {
-            res.status(500).json({status: false, message:"Error while creating new tchnology"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"Error while creating new tchnology"})
             
         }
     }
@@ -33,9 +34,9 @@ class TechnologyController{
         try {
             const { page,limit } = req.query
             const data = await this._technolgyService.getAllTechnologies(Number(page), Number(limit))
-            res.status(200).json({status: true, message: "data fetched sucessfully", data})
+            res.status(STATUS_CODES.OK).json({status: true, message: "data fetched sucessfully", data})
         } catch (error) {
-            res.status(500).json({status: false, message: "error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message: "error while fetching data"})
         }
     }
 
@@ -44,9 +45,9 @@ class TechnologyController{
         try {
             const updatedData = await this._technolgyService.updateTechnologies(id,data)
              if(updatedData)
-                res.status(200).json({status: true, message:"updated sucessfully",data:updatedData})
+                res.status(STATUS_CODES.OK).json({status: true, message:"updated sucessfully",data:updatedData})
         } catch (error) {
-            res.status(500).json({status: false, message:"unable to update the data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to update the data"})
         }
     }
 }

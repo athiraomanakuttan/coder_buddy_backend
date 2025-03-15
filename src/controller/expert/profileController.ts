@@ -1,6 +1,7 @@
 import { Request , Response } from "express";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import IExpertService from "../../services/expert/IExpertService";
+import { STATUS_CODES } from "../../constants/statusCode";
 
 class ProfileController{
     private profileService:IExpertService;
@@ -11,19 +12,19 @@ class ProfileController{
     async getExpertDetails(req: Request | any, res:Response):Promise<void>{
         const email  =  req.user
         if(!email){   
-            res.status(400).json({status: false, message:"user unautherized. please login", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"user unautherized. please login", data: null})
             return;
         }
         try {
             const userData =  await this.profileService.getExpertByEmail(email)
             if (userData?.status === 1) {
-          res.status(200).json({
+          res.status(STATUS_CODES.OK).json({
             status: true,
             message: "User data fetched successfully",
             data: userData,
           });
         } else {
-          res.status(400).json({
+          res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
             message: "User is blocked.",
             data: null,
@@ -42,7 +43,7 @@ class ProfileController{
         const file = req.file; 
     
         if (!userId) {
-            res.status(400).json({
+            res.status(STATUS_CODES.BAD_REQUEST).json({
                 status: false,
                 message: "User is not authorized. Please log in again.",
                 data: null,
@@ -72,14 +73,14 @@ class ProfileController{
             const updatedProfile = await this.profileService.updateExpert(userId, updatedData);
     
             if (updatedProfile) {
-                res.status(200).json({
+                res.status(STATUS_CODES.OK).json({
                     status: true,
                     message: "Profile updated successfully",
                     data: updatedProfile,
                 });
                 return;
             } else {
-                res.status(404).json({
+                res.status(STATUS_CODES.NOT_FOUND).json({
                     status: false,
                     message: "User profile not found",
                     data: null,
@@ -88,7 +89,7 @@ class ProfileController{
             }
         } catch (error) {
             console.error("Error updating profile:", error);
-            res.status(500).json({
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
                 message: "An error occurred while updating the profile",
                 data: null,

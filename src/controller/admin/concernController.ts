@@ -1,3 +1,4 @@
+import { STATUS_CODES } from "../../constants/statusCode"
 import IConcernService from "../../services/admin/IConcernService"
 import { Request,Response } from "express"
 class ConcernController{
@@ -11,9 +12,9 @@ class ConcernController{
         try {
             const concernData = await this._concernService.getConcernData(Number(status),Number(page),Number(limit))
             if(concernData)
-                res.status(200).json({status: true, message:"fetched concern data", data:concernData})
+                res.status(STATUS_CODES.OK).json({status: true, message:"fetched concern data", data:concernData})
         } catch (error) {
-            res.status(500).json({status:false, message:"Error while getting concern data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"Error while getting concern data"})
         }
     }
 
@@ -21,20 +22,20 @@ class ConcernController{
 
         const {concernId,status} = req.body
         if(!concernId){
-            res.status(400).json({status:false, message:"concern id is empty"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"concern id is empty"})
             return
         }
 
         if(!status || Number(status)<1 || Number(status)>2){
-            res.status(400).json({status:false, message:"Invalid status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"Invalid status"})
             return
         }
 
         try {
             const concenData = await this._concernService.updateConcernStatus(concernId, Number(status))
-            res.status(200).json({status: true, message:"status updated", data: concenData})
+            res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data: concenData})
         } catch (error) {
-            res.status(500).json({status:false, message:"unable to update the status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to update the status"})
         }
     }
 }
