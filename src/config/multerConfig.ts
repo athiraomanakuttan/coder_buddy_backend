@@ -1,5 +1,5 @@
 import multer, { FileFilterCallback } from 'multer';
-import { Router ,Request} from "express";
+import { Request} from "express";
 const storage = multer.memoryStorage();
 export const upload = multer({ 
   storage: storage,
@@ -8,6 +8,7 @@ export const upload = multer({
     file: Express.Multer.File, 
     cb: FileFilterCallback
   ) => {
+
     if (file.fieldname === 'profilePicture' || file.fieldname === 'uploads') {
 
       if (file.mimetype.startsWith('image/')) {

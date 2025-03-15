@@ -148,7 +148,7 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
 
 
 async updatePost(req: CustomRequest, res:Response):Promise<void>{
-    const {comments,...data}  = req.body
+    const {comments,uploads,...data}  = req.body
     const file = req.file;
         if (!data._id) {
             res.status(403).json({ 
@@ -169,10 +169,18 @@ async updatePost(req: CustomRequest, res:Response):Promise<void>{
                 return;
             }
         }
-        const postData = {
-            ...data,
-            uploads: uploadedFileUrl
+        let postData = {
+            ...data
         };
+        if(file){
+            postData = {
+                ...data,
+                uploads: uploadedFileUrl
+            };
+        }
+            
+
+            console.log("uploadedFileUrlwww", data)
 
        try {
         const updatedData =  await this.postService.updatePostDetails(data._id, postData)

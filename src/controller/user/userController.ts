@@ -351,6 +351,71 @@ class UserController {
       res.status(500).json({status: false, message:"unable to get the data"})
     }
   }
+
+  async refreshToken(req: Request, res: Response): Promise<void> {
+    try {
+      // Get the refresh token from the HTTP-only cookie
+      const refreshToken = req.cookies.userRefreshToken;
+  
+      if (!refreshToken) {
+        res.status(401).json({
+          success: false,
+          message: 'Refresh token not found',
+          data: null,
+        });
+        return;
+      }
+  
+      try {
+        // Verify the refresh token using your existing method
+        // Pass true to indicate it's a refresh token
+        const decoded = JwtUtility.verifyToken(refreshToken, true) as { email: string; id: string };
+  
+        // Generate a new access token
+        const accessToken = JwtUtility.generateAccessToken({
+          email: decoded.email,
+          id: decoded.id,
+        });
+  
+        // Optionally, you can also rotate (generate a new) refresh token for better security
+        const newRefreshToken = JwtUtility.generateRefreshToken({
+          email: decoded.email,
+          id: decoded.id,
+        });
+  
+        // Set the new refresh token as an HTTP-only cookie
+        res.cookie('userRefreshToken', newRefreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 24 * 60 * 60 * 1000, // 1 day, matching your JWT expiry
+        });
+  
+        // Return the new access token to the client
+        res.status(200).json({
+          success: true,
+          message: 'Token refreshed successfully',
+          data: {
+            accessToken,
+          },
+        });
+      } catch (tokenError) {
+        // Token verification failed
+        res.status(401).json({
+          success: false,
+          message: 'Invalid refresh token',
+          data: null,
+        });
+      }
+    } catch (error) {
+      console.error('Refresh Token Error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to refresh token',
+        data: null,
+      });
+    }
+  }
+  
 }
 
 export default UserController;
