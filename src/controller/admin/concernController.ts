@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 import { STATUS_CODES } from "../../constants/statusCode"
 import IConcernService from "../../services/admin/IConcernService"
 import { Request,Response } from "express"
@@ -14,7 +15,7 @@ class ConcernController{
             if(concernData)
                 res.status(STATUS_CODES.OK).json({status: true, message:"fetched concern data", data:concernData})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"Error while getting concern data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 
@@ -22,12 +23,12 @@ class ConcernController{
 
         const {concernId,status} = req.body
         if(!concernId){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"concern id is empty"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
             return
         }
 
         if(!status || Number(status)<1 || Number(status)>2){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"Invalid status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
             return
         }
 
@@ -35,7 +36,7 @@ class ConcernController{
             const concenData = await this._concernService.updateConcernStatus(concernId, Number(status))
             res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data: concenData})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to update the status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 }

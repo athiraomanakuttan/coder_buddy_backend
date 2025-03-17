@@ -3,6 +3,7 @@ import ExpertService from "../../services/expert/Implimentation/expertServices";
 import { CommentType } from "../../model/user/postModel";
 import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 export interface CustomRequest extends Request {
     id ?: string;  
@@ -21,12 +22,12 @@ class PostController {
       const { page = 1, limit = 10 } = req.query;
       const id = req.id
       if(!id){
-      res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'User is not autherized' });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: ERROR_MESSAGES.UNAUTHORIZED });
         return
       }
     const expertDetails = await this.postService.getExpertById(id)
     if(!expertDetails){
-        res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'User is not autherized' });
+        res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message:  ERROR_MESSAGES.UNAUTHORIZED });
         return
     }
       const posts = await this.postService.fetchPosts(Number(page), Number(limit) , expertDetails.skills ?expertDetails.skills : null );
@@ -37,7 +38,7 @@ class PostController {
             return
         }
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error fetching posts' });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
     }
   }
 
@@ -45,7 +46,7 @@ class PostController {
     const data = req.body
     const id = req.id;
     if(!id || !data.postId){
-      res.status(STATUS_CODES.BAD_REQUEST).json({status :  false, message : "user is not autherized."})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status :  false, message : ERROR_MESSAGES.UNAUTHORIZED})
       return
     }
     
@@ -60,7 +61,7 @@ class PostController {
         res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"unable to add comment"})
           
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status :  false, message : "unable to add comment. Try again"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status :  false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
       
     }
   }
@@ -68,7 +69,7 @@ class PostController {
   async deleteComment(req: Request, res:Response):Promise<void>{
     const {commentId , expertId ,  postId} = req.body
     if(!commentId || !expertId || !postId){
-      res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message : "unable to delete comment"})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message : ERROR_MESSAGES.INVALID_INPUT})
       return
     }
     try {
@@ -80,7 +81,7 @@ class PostController {
       res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message : "unable to delete comment"})
 
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false ,  message : "unable to delete comment"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false ,  message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
       
     }
   }

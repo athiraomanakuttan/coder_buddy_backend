@@ -3,6 +3,7 @@ import { Response } from "express"
 import { CustomType } from "../../types/type"
 import IPaymentService from "../../services/expert/IPaymentService"
 import { STATUS_CODES } from "../../constants/statusCode"
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 
 class ReportController{
 private _meetingService : IMeetingService
@@ -17,7 +18,7 @@ async getExpertReport(req:CustomType, res:Response):Promise<void>{
     const expertId = req.id
     try {
         if(!expertId){
-            res.status(400).json({status: false, message : "unautherized user"})
+            res.status(400).json({status: false, message : ERROR_MESSAGES.UNAUTHORIZED})
             return
         }
         const meetingData = await this._meetingService.getMeetingDetails(expertId)
@@ -25,7 +26,7 @@ async getExpertReport(req:CustomType, res:Response):Promise<void>{
         const walletBalance = await this._paymentService.getWalletBalance(expertId)
         res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data :{...meetingData, meetingRating:meetingRating?.toFixed(1), walletBalance}})
     } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
 }
 }

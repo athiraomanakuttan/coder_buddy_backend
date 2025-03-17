@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 import { STATUS_CODES } from "../../constants/statusCode"
 import IAdminService from "../../services/admin/IAdminService"
 import IConcernService from "../../services/admin/IConcernService"
@@ -22,7 +23,7 @@ class ReportController {
             const totalProfit = await this._adminService.getTotalProfit()
             res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfully", data:{totalClient, totalExpert,totalProfit,scheduledMeeting,openTicket}})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 }

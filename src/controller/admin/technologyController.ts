@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 import { STATUS_CODES } from "../../constants/statusCode"
 import ITechnologyService from "../../services/admin/ITechologyService"
 import { Request, Response } from "express"
@@ -12,12 +13,12 @@ class TechnologyController{
         const {title} = req.body
         try {
             if(!title.trim()){
-                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"invalid input"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.INVALID_INPUT})
                 return
             }
             const techExist =  await this._technolgyService.getTechnologyByTitle(title)
             if(techExist){
-                res.status(STATUS_CODES.CONFLICT).json({status: false, message:"technology already exist"})
+                res.status(STATUS_CODES.CONFLICT).json({status: false, message:ERROR_MESSAGES.DUPLICATE_DATA})
                 return
             }
             const data =  await this._technolgyService.createTechnology(title)
@@ -25,7 +26,7 @@ class TechnologyController{
                 res.status(STATUS_CODES.OK).json({status: true, message:"Create sucessfully"})
             }
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"Error while creating new tchnology"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             
         }
     }
@@ -36,7 +37,7 @@ class TechnologyController{
             const data = await this._technolgyService.getAllTechnologies(Number(page), Number(limit))
             res.status(STATUS_CODES.OK).json({status: true, message: "data fetched sucessfully", data})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message: "error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 
@@ -47,7 +48,7 @@ class TechnologyController{
              if(updatedData)
                 res.status(STATUS_CODES.OK).json({status: true, message:"updated sucessfully",data:updatedData})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to update the data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.UPDATION_FAILED})
         }
     }
 }

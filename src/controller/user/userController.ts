@@ -9,6 +9,7 @@ import PasswordUtils from "../../utils/passwordUtils";
 import IUserService from "../../services/user/IUserService";
 import { CustomRequest } from "./postController";
 import {STATUS_CODES } from '../../constants/statusCode'
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 class UserController {
   private userService: IUserService;
@@ -21,7 +22,7 @@ class UserController {
       const user = req.body;
 
       if (!user.email || !user.password) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Email and password are required." });
+        res.status(STATUS_CODES.BAD_REQUEST).json({ message: ERROR_MESSAGES.INVALID_INPUT});
         return;
       }
 
@@ -71,7 +72,7 @@ class UserController {
       console.error("Error during signup:", err);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ message: `Error while adding user: ${err.message}` });
+        .json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
   }
 
@@ -104,7 +105,7 @@ class UserController {
           .status(STATUS_CODES.OK)
           .json({ message: "OTP verified successfully", user: updateUser });
       } else {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Error updating user data" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.UPDATION_FAILED });
       }
     } else {
       res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" });
@@ -201,7 +202,7 @@ class UserController {
       console.error("Login Error:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: "Failed to login. Please try again later.",
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
         data: null,
       });
     }
@@ -212,7 +213,7 @@ class UserController {
     if (!email) {
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, messgae: "email is empty try again" });
+        .json({ status: false, messgae: ERROR_MESSAGES.INVALID_INPUT });
       return;
     }
     const getUserData = await this.userService.findByEmail(email);
@@ -254,7 +255,7 @@ class UserController {
   async updatePassword(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "invalid credentails" });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
       return;
     }
     try {
@@ -288,13 +289,13 @@ class UserController {
       console.log("error while updating password", error);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ status: false, message: "error while updating password" });
+        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
   }
   async googleSinup(req: Request, res: Response): Promise<void> {
     const { name, email, image } = await req.body;
     if (!email) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "invalid email id " });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
       return;
     } 
     try {
@@ -326,7 +327,7 @@ class UserController {
     res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
     } catch (error) {
       console.log("error occured during creating user", error)
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
   }
 
@@ -334,14 +335,14 @@ class UserController {
     const userId = req.id
     try {
       if(!userId){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"user not found"})
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED})
         return
       }
       const totalPost = await this.userService.getPostCount(userId)
       const meetingData = await this.userService.getMeetingDetails(userId)
       res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data : {...totalPost,...meetingData}})
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"Error while fetching Data"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
   }
 
@@ -350,7 +351,7 @@ class UserController {
       const data = await this.userService.getAllTechnologies()
       res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucssfully", data})
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to get the data"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
   }
 
@@ -412,7 +413,7 @@ class UserController {
       console.error('Refresh Token Error:', error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to refresh token',
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
         data: null,
       });
     }

@@ -5,7 +5,7 @@ export enum ERROR_MESSAGES {
     UNAUTHORIZED= "You are not authorized to access this resource.",
     FORBIDDEN= "You are not allowed to perform this action.",
     NOT_FOUND= "The requested resource could not be found.",
-    
     INVALID_INPUT= "The request contains invalid data.",
-
+    UPDATION_FAILED = "Unable to update data",
+    DUPLICATE_DATA= "Data already exist"
 }

@@ -2,6 +2,7 @@ import { Request , Response } from "express";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 class ProfileController{
     private profileService:IExpertService;
@@ -12,7 +13,7 @@ class ProfileController{
     async getExpertDetails(req: Request | any, res:Response):Promise<void>{
         const email  =  req.user
         if(!email){   
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"user unautherized. please login", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED, data: null})
             return;
         }
         try {
@@ -31,7 +32,7 @@ class ProfileController{
           });
         }
         } catch (error) {
-            
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
 
     }
@@ -45,7 +46,7 @@ class ProfileController{
         if (!userId) {
             res.status(STATUS_CODES.BAD_REQUEST).json({
                 status: false,
-                message: "User is not authorized. Please log in again.",
+                message: ERROR_MESSAGES.UNAUTHORIZED,
                 data: null,
             });
             return;
@@ -91,7 +92,7 @@ class ProfileController{
             console.error("Error updating profile:", error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
-                message: "An error occurred while updating the profile",
+                message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
                 data: null,
             });
             return;

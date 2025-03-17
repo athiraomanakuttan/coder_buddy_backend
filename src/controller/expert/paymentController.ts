@@ -7,6 +7,7 @@ import IPaymentService from "../../services/expert/IPaymentService";
 import axios from "axios";
 import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 
 const razorpay = new Razorpay({
@@ -43,7 +44,7 @@ class PaymentController{
             res.status(STATUS_CODES.OK).json({status:true,message:"meeting link created sucessfully", data:response})
         } catch (error) {
             console.log("error", error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:"unable to create meeting link"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }   
     }
 
@@ -52,7 +53,7 @@ class PaymentController{
         const {status ,page, count}= req.query
         
         if(!userId){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user id is empty try again"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.UNAUTHORIZED})
             return
         }
         try {
@@ -61,7 +62,7 @@ class PaymentController{
             res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:paymentDetails})
                 
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch data "})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             
         }
     }
@@ -74,7 +75,7 @@ class PaymentController{
                 res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfull",data:paymentDetails})
             }
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch details"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             
         }
     }
@@ -98,7 +99,7 @@ class PaymentController{
                 key: process.env.RAZORPAY_KEY_ID
             });
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'Order creation failed' });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
         }
     }
     
@@ -163,7 +164,7 @@ class PaymentController{
         const expertId   =  req.id
         try {
             if(!expertId){
-                res.status(STATUS_CODES.UNAUTHORIZED).json({status: false, message: "expert id is empty"})
+                res.status(STATUS_CODES.UNAUTHORIZED).json({status: false, message: ERROR_MESSAGES.UNAUTHORIZED})
                 return;
             }
 
@@ -172,7 +173,7 @@ class PaymentController{
                 res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data:walletData})
             }
         } catch (error) {
-            
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
     

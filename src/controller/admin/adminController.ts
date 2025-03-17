@@ -4,6 +4,7 @@ import { UserType } from "../../model/user/userModel"
 import { ExpertDocument } from "../../model/expert/expertModel"
 import IAdminService from "../../services/admin/IAdminService"
 import { STATUS_CODES } from "../../constants/statusCode"
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 
 class AdminController{
     private adminService: IAdminService  
@@ -16,11 +17,11 @@ class AdminController{
         const adminEmail = process.env.ADMIN_EMAIL
         const adminPassword = process.env.ADMIN_PASSWORD
         if(!email || !password){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"email or password can not be empty"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
             return
         }
         else if(!adminEmail || !adminPassword ){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"unable to login. please try again"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
             return
         }
         const checkCredentails = this.adminService.adminSignup({email,password},{email:adminEmail,password:adminPassword})
@@ -62,7 +63,7 @@ class AdminController{
             console.log(error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
-                message: "Error while fetching data", 
+                message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 
                 data: null
             });
         }
@@ -98,7 +99,7 @@ class AdminController{
             console.error(error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
-                message: "Error while fetching data", 
+                message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 
                 data: null
             });
         }
@@ -107,7 +108,7 @@ class AdminController{
     async changeUserStatus(req:Request , res:Response):Promise<void>{
         const {id, status} = req.body
         if(!id || status===undefined){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             return;
         }
         const checkUser =  await this.adminService.getUserById(id)
@@ -122,7 +123,7 @@ class AdminController{
             res.status(STATUS_CODES.OK).json({status:true, message:"user status updated successfully"})
         } catch (error) {
             console.log("error while updating user",error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
 
     }
@@ -134,7 +135,7 @@ class AdminController{
             res.status(STATUS_CODES.OK).json({status: true, message:"data fetched successfully", data:expertData})
         } catch (error) {
             console.log(error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"error while fetching data"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         }
     }
@@ -142,7 +143,7 @@ class AdminController{
     async changeExpertStatus(req:Request, res:Response):Promise<void>{
         const {id} = req.body
         if(!id ){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INVALID_INPUT})
             return;
         }
         try {
@@ -151,7 +152,7 @@ class AdminController{
             res.status(STATUS_CODES.OK).json({status:true, message:"expert rejected",data:updateExpert})
         } catch (error) {
             console.log(error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : "unable to update the user status"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         }
     }
@@ -170,11 +171,9 @@ class AdminController{
                 res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data:changedStatus})
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to change status" })
-            
         }
     }
 
-    //get user profile details by userId
     async getUserDataById(req:Request, res:Response):Promise<void>{
         const userId = req.params.id
         try {

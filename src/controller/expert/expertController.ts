@@ -8,6 +8,7 @@ import OtpUtility from "../../utils/otpUtility";
 import IExpertService from "../../services/expert/IExpertService";
 import IUserService from "../../services/user/IUserService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 class ExpertController{ 
      private expertServece : IExpertService
@@ -21,7 +22,7 @@ class ExpertController{
         const { email, password} =  req.body;
         if(!email.trim() || !password.trim())
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false ,  message:"email or password isnot in required format", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false ,  message:ERROR_MESSAGES.INVALID_INPUT, data: null})
             return;
         }
         const existExpert = await this.expertServece.getExpertByEmail(email)
@@ -40,7 +41,7 @@ class ExpertController{
                 const emailSend = await MailUtility.sendMail(email,otp,"Verifivation OTP")
                 res.status(STATUS_CODES.OK).json({status:true, message:"An otp has sent to your email", data : {otp,email}})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:` some eroor occured:${error}`, data: null})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null})
         }
      }
 
@@ -107,7 +108,7 @@ class ExpertController{
               .status(STATUS_CODES.OK)
               .json({ message: "OTP verified successfully", user: updateUser });
           } else {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Error updating user data" });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.UPDATION_FAILED });
           }
         } else {
           res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" });
@@ -116,7 +117,7 @@ class ExpertController{
      async forgotPassword(req: Request, res: Response):Promise<void>{
       const {email}= req.body;
       if(!email){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'email id is required'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INVALID_INPUT});
         return
       }
       try {
@@ -137,7 +138,7 @@ class ExpertController{
       }
       } catch (error) {
         console.log(error)
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : 'something went wrong'});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
       }
      }
      async updatePassword (req:Request , res : Response):Promise<void>{
@@ -164,11 +165,11 @@ class ExpertController{
           return 
         }
         else
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'unable to update password. try again'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.UPDATION_FAILED});
 
       } catch (error) {
         console.log(error)
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : 'something went wrong'});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
       }
      }
 
@@ -176,7 +177,7 @@ class ExpertController{
       const { name, email, image } = await req.body;
     
     if (!email) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "invalid email id " });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
       return;
     } 
     try {
@@ -215,7 +216,7 @@ class ExpertController{
       const userId = req.params.id
       try {
         if(!userId){
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:"user Id is empty"})
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.INVALID_INPUT})
         return
         }
 
@@ -223,7 +224,7 @@ class ExpertController{
         if(userData)
           res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data: userData})
       } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to fetch user Data"})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
       }
      }
 

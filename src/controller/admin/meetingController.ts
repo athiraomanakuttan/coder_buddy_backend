@@ -6,6 +6,7 @@ import { ExpertDocument } from "../../model/expert/expertModel";
 import IMeetingService from "../../services/admin/IMeetingService";
 import IAdminService from "../../services/admin/IAdminService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 class MeetingController{
     private meetingService : IMeetingService;
     private adminService : IAdminService;
@@ -28,11 +29,11 @@ class MeetingController{
                     return;
                 }
                 else
-                res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message: "Meeting created successfully"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         } catch (error) {
             console.log(error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to create meeting"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
 
     }
@@ -47,10 +48,10 @@ class MeetingController{
                 res.status(STATUS_CODES.OK).json({status: true, message : "data Fetched sucessfully", data:meetingData, count:totalCount, totalPages: pageCount})
                 return
             }
-           res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : "unable to fetch data"}) 
+           res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : ERROR_MESSAGES.NOT_FOUND}) 
         } catch (error:any) {
             console.log(error)
-           res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : "unable to fetch data"}) 
+           res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR}) 
         }
     }   
 
@@ -65,10 +66,10 @@ class MeetingController{
                     return;
                 }
             }
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : "unable to update the expert status"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : ERROR_MESSAGES.UPDATION_FAILED})
         } catch (error) {
             console.log(error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable t update the status "})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
     

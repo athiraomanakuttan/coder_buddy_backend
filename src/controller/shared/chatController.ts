@@ -4,6 +4,7 @@ import IChatService from "../../services/shared/IChatService";
 import IUserService from "../../services/user/IUserService";
 import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 export interface CustomRequest extends Request {
     id?: string; 
   }
@@ -20,20 +21,20 @@ class ChatController {
         const id = req.id;
         try {
             if(!id){
-                res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"invalid user or userid is null"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.UNAUTHORIZED})
                 return
             }
            const chatList = await this.chatService.getUserChatList(id);
            res.status(STATUS_CODES.OK).json({status:true,message:"chat list fetched successfully",data: chatList})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch the chat list"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 
     async newMessage(req:CustomRequest,res:Response):Promise<void>{
         const senderId = req.id
         if(!senderId){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"user data is empty, unable to create new chat"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.UNAUTHORIZED})
             return
         }
          let { receiverId, message,chatId , postId } = req.body;
@@ -74,7 +75,7 @@ class ChatController {
             res.status(STATUS_CODES.OK).json({status:true, message:"conversation created sucessfully", data: conversation})
          } catch (error){
             console.log("error while adding conversation",error)
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,messsage:"unable to create chat"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,messsage:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
          }
     }
 
@@ -82,21 +83,21 @@ class ChatController {
         const {chatId} =  req.params
         try {
             if(!chatId){
-                res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"chat id is empty"})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
                 return
             }
             const chatData = await this.chatService.getChatData(chatId)
             res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:chatData})
         } catch (error) {
                 console.log(error)
-                res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to fetch the data"})
+                res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 
     async createNewChat(req:CustomRequest, res:Response):Promise<void>{
         const senderId = req.id
         if(!senderId){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"user data is empty, unable to create new chat"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.UNAUTHORIZED})
             return
         }
          let { expertId, postId } = req.body;
@@ -138,7 +139,7 @@ class ChatController {
                 }
             }
            catch(error){
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,messsage:"unable to create chat"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,messsage:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
            }
     }
 

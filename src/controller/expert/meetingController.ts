@@ -2,6 +2,7 @@ import { Request,Response } from "express"
 import MeetingService from "../../services/expert/Implimentation/meetingService"
 import IMeetingService from "../../services/expert/IMeetingService"
 import { STATUS_CODES } from "../../constants/statusCode"
+import { ERROR_MESSAGES } from "../../constants/errorMessage"
 interface CustomType extends Request{
     id?:string
 }
@@ -14,7 +15,7 @@ class MeetingController{
     async getAdminExpertMeeting(req:CustomType , res:Response):Promise<void>{
         const expertId = req.id;
         if(!expertId){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user is not authenticated"})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.UNAUTHORIZED})
             return
         }
         try {
@@ -22,7 +23,7 @@ class MeetingController{
             res.status(STATUS_CODES.OK).json({status:true, message:"data fetched successfully ", data: meetingDetails})
             
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to get the details"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             
         }
     }
@@ -31,7 +32,7 @@ class MeetingController{
         const {meetingId} = req.body;
         
         if( !meetingId ){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"Invalid user details"});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.INVALID_INPUT});
             return; 
         }
         try {
@@ -43,7 +44,7 @@ class MeetingController{
             res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"Invalid meeting"})
 
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to access the meeting"})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }
 }

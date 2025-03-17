@@ -3,6 +3,7 @@ import UserService from "../../services/user/Implimentation/userServices";
 import { UserType } from "../../model/user/userModel";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import {STATUS_CODES } from '../../constants/statusCode'
+import { ERROR_MESSAGES } from "../../constants/errorMessage";
 
 class ProfileController {
   private profileService: UserService;
@@ -31,14 +32,14 @@ class ProfileController {
         console.error("Error retrieving profile:", error);
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
           status: false,
-          message: "Failed to fetch profile",
+          message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
           data: null,
         });
       }
     } else {
       res.status(STATUS_CODES.BAD_REQUEST).json({
         status: false,
-        message: "User is not authorized",
+        message: ERROR_MESSAGES.UNAUTHORIZED,
         data: null,
       });
     }
@@ -52,7 +53,7 @@ class ProfileController {
         .status(STATUS_CODES.BAD_REQUEST)
         .json({
           status: false,
-          message: "User is not authorized. Please log in again.",
+          message:ERROR_MESSAGES.UNAUTHORIZED,
           data: null,
         });
       return;
@@ -115,13 +116,13 @@ class ProfileController {
       } else {
         res
           .status(STATUS_CODES.NOT_FOUND)
-          .json({ status: false, message: "User not found", data: null });
+          .json({ status: false, message: ERROR_MESSAGES.NOT_FOUND, data: null });
       }
     } catch (error) {
       console.error("Error while updating", error);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ status: false, message: "Internal server error", data: null });
+        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null });
     }
   }
 
@@ -129,7 +130,7 @@ class ProfileController {
     const {id} = req.params
     try {
       if(!id){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"Expert id is empty"});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT});
         return
       }
       const expertData =  await this.profileService.getExpertById(id)
@@ -140,7 +141,7 @@ class ProfileController {
       res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:"User is not active with this id"})
 
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"error fetching profiledata"});
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
     }
   }
   
