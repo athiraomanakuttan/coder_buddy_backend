@@ -15,6 +15,7 @@ import session from 'express-session';
 import cookieParser from "cookie-parser"
 import cors from 'cors'
 import configureSocket from './config/socketConfig';
+import morganMiddleware from './middleware/morganMiddleware';
 
 
 connectDb()
@@ -46,6 +47,8 @@ app.use(
         saveUninitialized: true,
     })
 );
+
+app.use(morganMiddleware)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/', userRouter);
