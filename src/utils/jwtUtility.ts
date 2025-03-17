@@ -6,7 +6,7 @@ const access_secret = process.env.JWT_ACCESS_TOKEN_SECRET_KEY as string
 const refresh_secret = process.env.JWT_REFRESH_TOKEN_SECRET_KEY as string
 class JwtUtility{
     static generateAccessToken(payload:object):string{
-        return jwt.sign(payload,access_secret,{expiresIn:'1h'})
+        return jwt.sign(payload,access_secret,{expiresIn:'1m'})
     }
     static generateRefreshToken(payload:object):string{
         return jwt.sign(payload, refresh_secret,{expiresIn:'1d'})

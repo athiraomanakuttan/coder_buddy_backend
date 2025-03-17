@@ -49,7 +49,6 @@ class MeetingController {
         res.status(STATUS_CODES.OK).json({ status : false, message:"Sucessfully fetched data", data : {...meetingData} }) 
       }
     } catch (error) {
-      console.log("error", error)
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR, error:error});
       
     }
@@ -86,7 +85,6 @@ try {
   }
   
 } catch (error) {
-  console.log("error", error)
   res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
   
 }  
@@ -140,7 +138,6 @@ async getMeetingFeedback(req:CustomType,res:Response):Promise<void>{
   }
   try {
     const feedbackData = await this._meetingService.getMeetingFeedback(meetingId as string,userId)
-    console.log("feedbackData",feedbackData)
     res.status(STATUS_CODES.OK).json({status: true, data:feedbackData})
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false,message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})

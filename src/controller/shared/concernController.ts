@@ -47,7 +47,6 @@ class ConcernController{
                 res.status(STATUS_CODES.OK).json({status: false, message:"concer created sucessfully"})
             }
         } catch (error) {
-            console.log("error", error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }

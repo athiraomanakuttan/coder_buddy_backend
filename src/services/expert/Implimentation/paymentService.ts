@@ -2,7 +2,7 @@ import { FundModelType } from "../../../model/expert/fund.model";
 import { PaymentType } from "../../../model/expert/paymentModel";
 import { WalletDataType } from "../../../model/expert/wallet.model";
 import PaymentRepository from "../../../repositories/expert/paymentRepository"
-import { PaymentListResponseType } from "../../../repositories/implementation/expert/paymentRepositoryImplimentation";
+import { PaymentListResponseType } from "../../../types/type";
 import IPaymentService from "../IPaymentService";
 
 class PaymentService implements IPaymentService{

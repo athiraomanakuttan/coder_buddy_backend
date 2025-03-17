@@ -74,7 +74,6 @@ class ChatController {
             const conversation =  await this.chatService.creatConversation(chatId,senderId,receiverId,message)
             res.status(STATUS_CODES.OK).json({status:true, message:"conversation created sucessfully", data: conversation})
          } catch (error){
-            console.log("error while adding conversation",error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,messsage:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
          }
     }
@@ -89,7 +88,6 @@ class ChatController {
             const chatData = await this.chatService.getChatData(chatId)
             res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:chatData})
         } catch (error) {
-                console.log(error)
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }

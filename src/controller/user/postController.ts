@@ -17,7 +17,6 @@ class PostController{
     try {
         const data = req.body;
         const file = req.file;
-        console.log(data)
         if (!data.userId) {
             res.status(STATUS_CODES.UNAUTHORIZED).json({ 
                 status: false, 
@@ -41,7 +40,6 @@ class PostController{
             ...data,
             uploads: uploadedFileUrl
         };
-        console.log("postdata",postData)
         const uploadPost = await this.postService.uploadPost(postData);
         if (uploadPost) {
             res.status(STATUS_CODES.CREATED).json({ 
@@ -67,7 +65,6 @@ class PostController{
 
 async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
     const userId = req.id ; 
-    console.log("user details",userId)
     let { status, page = 1, limit = 5 } = req.body
     if (!userId) {
         res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.UNAUTHORIZED })
@@ -78,7 +75,6 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
         const pageNumber = Number(page);
         const pageSize = Number(limit);
         const userDetails = await this.postService.getUserPost( userId, status, pageNumber,pageSize)
-        console.log("userDetails",userDetails)
         if (userDetails) {
             res.status(STATUS_CODES.OK).json({
                 status: true, 
@@ -92,7 +88,6 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
             })
         }
     } catch (error) {
-        console.log(error)
         res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
     }
 }
@@ -110,7 +105,6 @@ async updatePostStatus(req:CustomRequest, res: Response):Promise<void>{
             res.status(STATUS_CODES.OK).json({status: true, message:"post updated successfully"})
         }
     } catch (error) {
-        console.log("error while updating post status", error)
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
 }
@@ -129,7 +123,6 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
         const pageNumber = Number(page);
         const pageSize = Number(limit);
         const userDetails = await this.postService.getUserPost( userId, status, pageNumber,pageSize ,search)
-        console.log("userDetails",userDetails)
         if (userDetails) {
             res.status(STATUS_CODES.OK).json({
                 status: true, 
@@ -143,7 +136,6 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
             })
         }
     } catch (error) {
-        console.log(error)
         res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
 }
@@ -203,7 +195,6 @@ async getPostReport(req:CustomRequest,res: Response):Promise<void>{
         res.status(STATUS_CODES.OK).json({status: true, message:"fetched data sucessfully", data:postReport})
       }
     } catch (error) {
-      console.log("error while ftching report", error)
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
   }

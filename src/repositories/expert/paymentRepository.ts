@@ -1,7 +1,7 @@
 import { FundModelType } from "../../model/expert/fund.model"
 import { PaymentType } from "../../model/expert/paymentModel"
 import { WalletDataType } from "../../model/expert/wallet.model"
-import { PaymentListResponseType } from "../implementation/expert/paymentRepositoryImplimentation"
+import { PaymentListResponseType } from "../../types/type"
 interface PaymentRepository{
     createPayment(title: string, amount: number, userId: string, expertId: string, postId: string): Promise<PaymentType | null>
     getPaymentList(userId:string, status : number, page: number, count: number):Promise<PaymentListResponseType | null>

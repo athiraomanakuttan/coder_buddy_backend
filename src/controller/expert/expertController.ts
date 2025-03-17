@@ -137,7 +137,6 @@ class ExpertController{
         return
       }
       } catch (error) {
-        console.log(error)
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
       }
      }
@@ -168,7 +167,6 @@ class ExpertController{
         res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.UPDATION_FAILED});
 
       } catch (error) {
-        console.log(error)
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
       }
      }
@@ -207,7 +205,6 @@ class ExpertController{
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
     
     } catch (error) {
-      console.log("error occured during creating user", error)
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
     }
      }

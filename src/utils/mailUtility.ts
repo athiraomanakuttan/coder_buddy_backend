@@ -68,7 +68,6 @@ class MailUtility{
       await transporter.sendMail(mailOptions);
       return { message: "mail sent successfully" };
   } catch (error) {
-    console.log("error", error)
 
       throw new Error('Failed to send OTP email');
   }

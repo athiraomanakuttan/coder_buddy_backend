@@ -60,7 +60,6 @@ class AdminController{
                 }
             });
         } catch (error) {
-            console.log(error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
                 message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 
@@ -119,10 +118,8 @@ class AdminController{
         try {
             const data ={ status: status} as UserType
             const updateUser =  await this.adminService.updateUserById(id,data)
-            console.log("updateUser",updateUser)
             res.status(STATUS_CODES.OK).json({status:true, message:"user status updated successfully"})
         } catch (error) {
-            console.log("error while updating user",error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
 
@@ -134,7 +131,6 @@ class AdminController{
             const expertData =  await this.adminService.getExpertById(id)
             res.status(STATUS_CODES.OK).json({status: true, message:"data fetched successfully", data:expertData})
         } catch (error) {
-            console.log(error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         }
@@ -151,7 +147,6 @@ class AdminController{
             const updateExpert = await this.adminService.updateExpertById(id,data) 
             res.status(STATUS_CODES.OK).json({status:true, message:"expert rejected",data:updateExpert})
         } catch (error) {
-            console.log(error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         }
@@ -181,7 +176,6 @@ class AdminController{
             if(userData)
                 res.status(STATUS_CODES.OK).json({status:true, message:"user data fetched sucessfully", data:userData})
         } catch (error) {
-            console.log("error while fetcing user profile")
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to fetch user data"})
         }
     }    

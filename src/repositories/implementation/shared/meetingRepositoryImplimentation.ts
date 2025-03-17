@@ -55,7 +55,6 @@ class MeetingRepositoryImplimentation  implements IMeetingRepositories{
                 }
             }
         ]);
-        console.log("report", report)
         return report;
     }
 

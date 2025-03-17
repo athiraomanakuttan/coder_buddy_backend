@@ -32,7 +32,6 @@ class MeetingController{
                 res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
 
         } catch (error) {
-            console.log(error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
 
@@ -50,7 +49,6 @@ class MeetingController{
             }
            res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : ERROR_MESSAGES.NOT_FOUND}) 
         } catch (error:any) {
-            console.log(error)
            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR}) 
         }
     }   
@@ -68,7 +66,6 @@ class MeetingController{
             }
             res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : ERROR_MESSAGES.UPDATION_FAILED})
         } catch (error) {
-            console.log(error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }
     }

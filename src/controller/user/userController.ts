@@ -286,7 +286,6 @@ class UserController {
           .status(STATUS_CODES.BAD_REQUEST)
           .json({ status: false, message: "unable to update password" });
     } catch (error) {
-      console.log("error while updating password", error);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
         .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
@@ -304,7 +303,6 @@ class UserController {
     const data =  {email, first_name:name, profilePicture:image, status:1} as UserType
      userData =  await this.userService.createUser(data)
     }
-    console.log("inside",userData)
 
     if(!userData || userData.status!==1){
       res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"account is blocked "})
@@ -326,7 +324,6 @@ class UserController {
     });
     res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
     } catch (error) {
-      console.log("error occured during creating user", error)
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
     }
   }
@@ -357,9 +354,7 @@ class UserController {
 
   async refreshToken(req: Request, res: Response): Promise<void> {
     try {
-      // Get the refresh token from the HTTP-only cookie
       const refreshToken = req.cookies.userRefreshToken;
-  
       if (!refreshToken) {
         res.status(STATUS_CODES.UNAUTHORIZED).json({
           success: false,

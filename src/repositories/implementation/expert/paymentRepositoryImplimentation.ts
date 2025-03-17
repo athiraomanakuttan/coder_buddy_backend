@@ -14,7 +14,6 @@ class PaymentRepositoryImplimentation implements IPaymentRepository{
 
     async getPaymentList(userId: string, status: number = 0, page: number = 1, count :number = 5): Promise<PaymentListResponseType | null> {
         const skip = (page - 1) * count
-        console.log("status",status)
         const paymentDetails = await Payment.find({
             status: status,
             $or: [

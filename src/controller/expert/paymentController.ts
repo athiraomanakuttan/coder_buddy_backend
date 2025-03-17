@@ -43,7 +43,6 @@ class PaymentController{
             }
             res.status(STATUS_CODES.OK).json({status:true,message:"meeting link created sucessfully", data:response})
         } catch (error) {
-            console.log("error", error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         }   
     }
