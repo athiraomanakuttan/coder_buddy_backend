@@ -3,12 +3,10 @@ import { AdminWallet } from "../../../model/admin/adminWallet";
 import { FundAccount, FundModelType } from "../../../model/expert/fund.model";
 import { Payment, PaymentType } from "../../../model/expert/paymentModel"
 import { Wallet, WalletDataType } from "../../../model/expert/wallet.model";
-import PaymentRepository from "../../expert/paymentRepository"
-export interface PaymentListResponseType{
-    paymentDetails: PaymentType[],
-    totalRecord: number
-}
-class PaymentRepositoryImplimentation implements PaymentRepository{
+import IPaymentRepository from "../../expert/paymentRepository"
+import { PaymentListResponseType } from "../../../types/type";
+
+class PaymentRepositoryImplimentation implements IPaymentRepository{
     async createPayment(title: string, amount: number, userId: string, expertId: string, postId: string): Promise<PaymentType | null> {
         const response =  await Payment.create({title,amount,userId,expertId, postId})
         return response;

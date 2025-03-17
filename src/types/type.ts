@@ -3,6 +3,7 @@ import { ConcernDataType } from '../model/shared/concern.model';
 import { MeetingUserType } from '../model/shared/meeting.model';
 import { TechnologyType } from '../model/admin/technology';
 import { AdminTransactionType } from '../model/admin/adminWallet';
+import { PaymentType } from '../model/expert/paymentModel';
 export type basicType={
     email:string;
     password : string;
@@ -86,4 +87,9 @@ export interface MonthlyProfitResult {
   export interface AdminTransactionOutput{
     amount: number,
     transaction : AdminTransactionType[]
+  }
+
+  export interface PaymentListResponseType{
+      paymentDetails: PaymentType[],
+      totalRecord: number
   }

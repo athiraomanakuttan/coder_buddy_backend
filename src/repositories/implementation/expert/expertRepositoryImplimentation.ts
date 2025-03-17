@@ -1,8 +1,8 @@
 import Expert, { ExpertDocument } from "../../../model/expert/expertModel";
 import { CommentType, Post, PostType } from "../../../model/user/postModel";
-import ExpertRepository from "../../expert/expertRepository";
+import IExpertRepository from "../../expert/expertRepository";
 
-class ExpertRepositoryImplementation implements ExpertRepository {
+class ExpertRepositoryImplementation implements IExpertRepository {
     async createExpert(data: Partial<ExpertDocument>): Promise<ExpertDocument | null> {
         return await Expert.create(data);
     }

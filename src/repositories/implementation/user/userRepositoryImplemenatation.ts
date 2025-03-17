@@ -1,13 +1,12 @@
-import UserRepository from "../../user/userRepository";
+import IUserRepository from "../../user/userRepository";
 import { User,UserType } from "../../../model/user/userModel";
 import { Post, PostType } from "../../../model/user/postModel";
 import Expert , { ExpertDocument } from "../../../model/expert/expertModel";
 import { MeetingCountType, MonthlyUserPostReportType, PostCountType } from "../../../types/type";
 import { MeetingUser } from "../../../model/shared/meeting.model";
-import { count } from "console";
 import { Technology, TechnologyType } from "../../../model/admin/technology";
 
-class UserRepositoryImplementation implements UserRepository{
+class UserRepositoryImplementation implements IUserRepository{
     async createUser(user: UserType): Promise<UserType> {
         const newUser = await User.create(user)
         return newUser

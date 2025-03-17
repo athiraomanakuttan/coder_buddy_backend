@@ -1,10 +1,10 @@
 import { MeetingType } from "../../../model/admin/meetingModel";
-import MeetingRepository from "../../../repositories/admin/meetingRepository";
+import IMeetingRepository from "../../../repositories/admin/meetingRepository";
 import IMeetingService from "../IMeetingService";
 
 class MeetingService implements IMeetingService{
-    private meetingRepository : MeetingRepository
-    constructor(meetingRepository : MeetingRepository){
+    private meetingRepository : IMeetingRepository
+    constructor(meetingRepository : IMeetingRepository){
         this.meetingRepository = meetingRepository
     }
     async createMeeting(data :  MeetingType):Promise<MeetingType | null>{

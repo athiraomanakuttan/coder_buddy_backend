@@ -1,13 +1,13 @@
 import { ExpertDocument } from "../../../model/expert/expertModel";
 import { CommentType, PostType } from "../../../model/user/postModel";
-import ExpertRepository from "../../../repositories/expert/expertRepository";
+import IExpertRepository from "../../../repositories/expert/expertRepository";
 import { MonthlyAdminProfitReport } from "../../../types/type";
 import IExpertService from "../IExpertService";
 
 class ExpertService implements IExpertService {
-    private expertRepository: ExpertRepository;
+    private expertRepository: IExpertRepository;
 
-    constructor(expertRepository: ExpertRepository) {
+    constructor(expertRepository: IExpertRepository) {
         this.expertRepository = expertRepository;
     }
 

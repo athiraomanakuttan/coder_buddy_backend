@@ -1,6 +1,6 @@
 import Meeting, { MeetingType } from '../../../model/admin/meetingModel'
-import  MeetingRepository  from '../../admin/meetingRepository'
-class MeetingRepositoryImplementation implements MeetingRepository{
+import  IMeetingRepository  from '../../admin/meetingRepository'
+class MeetingRepositoryImplementation implements IMeetingRepository{
     async createMeeting(data: MeetingType): Promise<MeetingType | null> {
         const createMeet =  await Meeting.create(data)
         return createMeet;

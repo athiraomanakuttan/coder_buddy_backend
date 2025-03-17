@@ -1,7 +1,7 @@
 import { ExpertDocument } from "../../model/expert/expertModel";
 import { PostType, CommentType } from "../../model/user/postModel";
 
-interface ExpertRepository{
+interface IExpertRepository{
     createExpert(data:ExpertDocument):Promise<ExpertDocument | null>;
     getExpertByEmail(email:string):Promise<ExpertDocument | null>;
     getExpertById(id:string):Promise<ExpertDocument | null>
@@ -12,4 +12,4 @@ interface ExpertRepository{
     addComment(id:string, data: CommentType):Promise<PostType | null>
     deleteComment(commentId: string, expertId: string, postId : string):Promise<PostType | null>
 }
-export default ExpertRepository;
+export default IExpertRepository;

@@ -2,9 +2,9 @@ import { count } from "console";
 import Meeting, { MeetingType } from "../../../model/admin/meetingModel";
 import { MeetingUser } from "../../../model/shared/meeting.model";
 import { MeetingReportType } from "../../../types/type";
-import MeetingRepository from "../../expert/meetingRepository";
+import IMeetingRepository from "../../expert/meetingRepository";
 
-class MeetingRepositoryImplimentation implements MeetingRepository{
+class MeetingRepositoryImplimentation implements IMeetingRepository{
 
     async getAdminExpertMeeting(id: string): Promise<MeetingType | null> {
         const meetingDetails = await Meeting.findOne({userId:id,status:0})

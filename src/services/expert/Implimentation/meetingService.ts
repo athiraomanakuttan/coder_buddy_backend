@@ -1,11 +1,11 @@
 import { MeetingType } from "../../../model/admin/meetingModel"
-import MeetingRepository from "../../../repositories/expert/meetingRepository"
+import IMeetingRepository from "../../../repositories/expert/meetingRepository"
 import { MeetingReportType } from "../../../types/type"
 import IMeetingService from "../IMeetingService"
 
 class MeetingService implements IMeetingService{
-private meetingRepository : MeetingRepository
-constructor(meetingRepository : MeetingRepository){
+private meetingRepository : IMeetingRepository
+constructor(meetingRepository : IMeetingRepository){
     this.meetingRepository = meetingRepository
 }
 async getAdminExpertMeeting(id:string):Promise<MeetingType | null>

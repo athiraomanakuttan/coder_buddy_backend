@@ -1,8 +1,8 @@
 import { Chat, ChatType, ParticipentsType } from "../../../model/shared/chat.model";
 import { Conversation, ConversationType } from "../../../model/shared/message.model";
-import ChatRepository from "../../shared/chatRepositories";
+import IChatRepository from "../../shared/chatRepositories";
 
-class ChatRepositoryImplimenation implements ChatRepository{
+class ChatRepositoryImplimenation implements IChatRepository{
 
     
     async getChatList(id: string): Promise<ChatType[] | null> {

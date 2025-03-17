@@ -1,8 +1,8 @@
 import { MeetingUserType, MeetingUser } from "../../../model/shared/meeting.model";
 import { CustomMeetingDataType, MeetingDataResponseType, MonthlyReport, RatingData } from "../../../types/type";
-import MeetingRepositories from "../../shared/meetingRepositories";
+import IMeetingRepositories from "../../shared/meetingRepositories";
 
-class MeetingRepositoryImplimentation  implements MeetingRepositories{
+class MeetingRepositoryImplimentation  implements IMeetingRepositories{
     async createMeeting(title: string, meetingDate: string, expertId: string, userId: string, postId :  string): Promise<MeetingUserType | null> {
         return await MeetingUser.create({title, meetingDate, expertId, userId, postId});
     }

@@ -1,11 +1,10 @@
 import { User, UserType } from "../../../model/user/userModel";
 import Expert, { ExpertDocument } from "../../../model/expert/expertModel";
-import AdminRepository from "../../admin/adminRepository";
-import AdminService from "../../../services/admin/Implimentation/adminService";
+import IAdminRepository from "../../admin/adminRepository";
 import { AdminTransactionOutput, MonthlyAdminProfitReport, MonthlyProfitResult } from "../../../types/type";
 import { AdminTransactionType, AdminWallet } from "../../../model/admin/adminWallet";
 
-class AdminRepositoryImplimentation implements AdminRepository{
+class AdminRepositoryImplimentation implements IAdminRepository{
     async getUserDetails(skip: number = 0, limit: number = 10): Promise<UserType[]> {
         return await User.find()
             .skip(skip)
