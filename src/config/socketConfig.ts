@@ -3,7 +3,7 @@ import { Server as HttpServer } from 'http';
 
 const configureSocket = (server: HttpServer) => {
     const io = new Server(server, {
-        cors: { origin: process.env.CLIENT_URL, methods: ['GET', 'POST'] },
+        cors: { origin: "*", methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] }, 
     });
 
     const rooms = new Map<string, Set<string>>();

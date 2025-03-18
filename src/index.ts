@@ -30,7 +30,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 const allowedOrigins = process.env.CORS_ORIGINS 
     ? process.env.CORS_ORIGINS.split(",") 
     : [];
-    
+    console.log("allowedOrigins",allowedOrigins)
 app.use(cors({
     origin: allowedOrigins.length > 0 ? allowedOrigins : "*", // Fallback to "*" if empty
     credentials: true,
