@@ -13,8 +13,8 @@ class MeetingRepositoryImplementation implements IMeetingRepository{
         const count = await Meeting.find({status :  status}).countDocuments()
         return count
     }
-    async updateMeetingByExpertId(id: string, meetingId : string): Promise<MeetingType | null> {
-        const updateMeeting = await Meeting.findOneAndUpdate({meetingId : meetingId , userId: id, status: 0}, {$set : { status:1}}, {next : true})
+    async updateMeetingByExpertId(userId: string, meetingId : string): Promise<MeetingType | null> {
+        const updateMeeting = await Meeting.findOneAndUpdate({meetingId : meetingId , userId: userId, status: 0}, {$set : { status:1}}, {next : true})
         return updateMeeting;
     }
  

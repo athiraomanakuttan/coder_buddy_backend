@@ -21,12 +21,12 @@ class PaymentService implements IPaymentService{
         return paymentDetails
     }
 
-    async getPaymentById(id:string):Promise<PaymentType | null>{
-        return await this.paymentRepository.getPaymentById(id)
+    async getPaymentById(paymentId:string):Promise<PaymentType | null>{
+        return await this.paymentRepository.getPaymentById(paymentId)
     }
 
-    async updatePaymentById(id: string, status: number, razorpayId:string | null): Promise<PaymentType | null>{
-        return await this.paymentRepository.updatePaymentById(id,status,razorpayId)
+    async updatePaymentById(paymentId: string, status: number, razorpayId:string | null): Promise<PaymentType | null>{
+        return await this.paymentRepository.updatePaymentById(paymentId,status,razorpayId)
     }
 
     async getWalletByExpertId(expertId: string): Promise<WalletDataType | null> {

@@ -11,12 +11,12 @@ export interface CustomRequest extends Request {
   const expertRepositoryImplementation =  new ExpertRepositoryImplementation()
   const exportService = new ExpertService(expertRepositoryImplementation)
 const checkExpertBlocked = async(req : CustomRequest,res : Response,next: NextFunction)=>{
-    const id = req.id;
-    if(!id){
+    const expertId = req.id;
+    if(!expertId){
         res.status(401).send({ error: 'Authentication failed.' });
         return;
     }
-    const getExpertData = await exportService.getExpertById(id)
+    const getExpertData = await exportService.getExpertById(expertId)
     if(!getExpertData){
         res.status(401).send({ error: 'Authentication failed.' });
         return;

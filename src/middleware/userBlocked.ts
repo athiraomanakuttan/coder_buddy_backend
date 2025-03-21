@@ -10,12 +10,12 @@ export interface CustomRequest extends Request {
   const userRepositoryImplementation =  new UserRepositoryImplementation()
   const userServices = new UserService(userRepositoryImplementation)
 const checkisUserBlocked = async(req : CustomRequest,res : Response,next: NextFunction)=>{
-    const id = req.id;
-    if(!id){
+    const userId = req.id;
+    if(!userId){
         res.status(401).send({ error: 'Authentication failed.' });
         return;
     }
-    const getUserData = await userServices.getUserById(id)
+    const getUserData = await userServices.getUserById(userId)
     if(!getUserData){
         res.status(401).send({ error: 'Authentication failed.' });
         return;

@@ -1,7 +1,6 @@
 import { ExpertDocument } from "../../../model/expert/expertModel";
 import { CommentType, PostType } from "../../../model/user/postModel";
 import IExpertRepository from "../../../repositories/expert/expertRepository";
-import { MonthlyAdminProfitReport } from "../../../types/type";
 import IExpertService from "../IExpertService";
 
 class ExpertService implements IExpertService {
@@ -19,12 +18,12 @@ class ExpertService implements IExpertService {
             const expertData = await this.expertRepository.getExpertByEmail(email);
             return expertData
     }
-    async getExpertById(id:string):Promise<ExpertDocument | null>{
-            const expertData =  await this.expertRepository.getExpertById(id)
+    async getExpertById(expertId:string):Promise<ExpertDocument | null>{
+            const expertData =  await this.expertRepository.getExpertById(expertId)
             return expertData
     }
-    async updateExpert(id:string , data : ExpertDocument):Promise<ExpertDocument | null>{
-        return  await this.expertRepository.updateExpert(id,data)
+    async updateExpert(expertId:string , data : ExpertDocument):Promise<ExpertDocument | null>{
+        return  await this.expertRepository.updateExpert(expertId,data)
     }
     async fetchPosts(page : number = 1, limit: number = 5, skillSet : string[] | null):Promise<PostType[] | null>{
         const skip = (page - 1) * limit
@@ -37,8 +36,8 @@ class ExpertService implements IExpertService {
         return count
     }
 
-    async addComment(id: string, data : CommentType):Promise<PostType | null >{
-        const newComment = await this.expertRepository.addComment(id,data)
+    async addComment(postId: string, data : CommentType):Promise<PostType | null >{
+        const newComment = await this.expertRepository.addComment(postId,data)
         return newComment
     }
 

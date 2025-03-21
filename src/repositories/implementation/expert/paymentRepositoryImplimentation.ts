@@ -32,15 +32,15 @@ class PaymentRepositoryImplimentation implements IPaymentRepository{
         return {paymentDetails, totalRecord};
     }
 
-    async getPaymentById(id: string): Promise<PaymentType | null> {
-        return   await Payment.findOne({_id:id})
+    async getPaymentById(paymentId: string): Promise<PaymentType | null> {
+        return   await Payment.findOne({_id:paymentId})
     }
 
-    async updatePaymentById(id: string, status: number, razorpayId:string | null): Promise<PaymentType | null> {
+    async updatePaymentById(paymentId: string, status: number, razorpayId:string | null): Promise<PaymentType | null> {
 
         
         const data = await Payment.findOneAndUpdate(
-            { _id: id },
+            { _id: paymentId },
             { 
                 status: status,
                 paymentDetails: { razorpay_payment_id: razorpayId }

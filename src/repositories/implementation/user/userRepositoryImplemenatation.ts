@@ -22,18 +22,18 @@ class UserRepositoryImplementation implements IUserRepository{
     async getUserByEmail(email: string): Promise<UserType | null> {
         return await User.findOne({ email });
     }
-    async findById(id: string): Promise<UserType | null> {
-        return await User.findOne({_id:id})
+    async findById(userId: string): Promise<UserType | null> {
+        return await User.findOne({_id:userId})
     }
-    async updateById(id: String, user: UserType): Promise<UserType | string | null> {
-        return await User.findOneAndUpdate({_id:id},user,{new : true})
+    async updateById(userId: String, user: UserType): Promise<UserType | string | null> {
+        return await User.findOneAndUpdate({_id:userId},user,{new : true})
     }
     async uploadPost(data: PostType): Promise<PostType | null> {
         const uploadPost = await Post.create(data)
         return uploadPost
     }
     async getPostDetails(
-        id: string, 
+        userId: string, 
         status: string | null, 
         skip: number = 0, 
         limit: number = 5,
@@ -56,10 +56,10 @@ class UserRepositoryImplementation implements IUserRepository{
                       { description: { $regex: searchQuery, $options: "i" } },
                       { technologies: { $regex: searchQuery, $options: "i" } }
                   ],
-                  userId: id,
+                  userId: userId,
                   status: { $in: poststatus }
               }
-            : { userId: id, status: { $in: poststatus } };
+            : { userId: userId, status: { $in: poststatus } };
     
         try {
             const postDetails = await Post.aggregate([
@@ -184,18 +184,18 @@ class UserRepositoryImplementation implements IUserRepository{
     }
     
     
-    async countPosts(id: string, status: string | null): Promise<number> {
+    async countPosts(userId: string, status: string | null): Promise<number> {
         const poststatus: (string | number)[] =  status!== null ? [status] : [0,1,2]
-        const count  =  await Post.countDocuments({userId : id, status:{$in : poststatus}})
+        const count  =  await Post.countDocuments({userId : userId, status:{$in : poststatus}})
         return count;
     }
-    async updatePostStatus(userId : string , id: string, status: number): Promise<PostType | null> {
-        const updatePost = await Post.findOneAndUpdate({_id:id, userId:userId},{$set:{status}},{new: true})
+    async updatePostStatus(userId : string , postId: string, status: number): Promise<PostType | null> {
+        const updatePost = await Post.findOneAndUpdate({_id:postId, userId:userId},{$set:{status}},{new: true})
         return updatePost
     }
 
-    async findExpertById(id: string): Promise<ExpertDocument | null> {
-        const data = await Expert.findOne({_id : id , status: 1 , isVerified  : 1})
+    async findExpertById(expertId: string): Promise<ExpertDocument | null> {
+        const data = await Expert.findOne({_id : expertId , status: 1 , isVerified  : 1})
         return data
     }
     async updatePostData(postId: string, postData: PostType): Promise<PostType | null> {

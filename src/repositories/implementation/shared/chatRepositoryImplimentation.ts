@@ -5,8 +5,8 @@ import IChatRepository from "../../shared/chatRepositories";
 class ChatRepositoryImplimenation implements IChatRepository{
 
     
-    async getChatList(id: string): Promise<ChatType[] | null> {
-        const chatData = await Chat.find({ 'participents.id': id })
+    async getChatList(participentId: string): Promise<ChatType[] | null> {
+        const chatData = await Chat.find({ 'participents.id': participentId })
         .populate("postId")
         .sort({ updatedAt: -1 })
         .lean();

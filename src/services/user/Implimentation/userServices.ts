@@ -32,19 +32,19 @@ class UserService implements IUserService{
     async getUserByEmail(email: string): Promise<UserType | null> {
         return await this.userRepository.getUserByEmail(email);
     }
-    async updateUserById(id: string ,  data: UserType): Promise<UserType |string | null >{
-        const updatedUser =  await this.userRepository.updateById(id,data)
+    async updateUserById(userId: string ,  data: UserType): Promise<UserType |string | null >{
+        const updatedUser =  await this.userRepository.updateById(userId,data)
         return updatedUser
     }
-    async getUserById(id :  string):Promise<UserType | null>{
-        const user =  await this.userRepository.findById(id)
+    async getUserById(userId :  string):Promise<UserType | null>{
+        const user =  await this.userRepository.findById(userId)
         return user
     }
     async uploadPost(data:PostType):Promise<PostType | null>{
         const uploadPost =  await this.userRepository.uploadPost(data)
         return uploadPost
     }
-    async getUserPost(id: string,status: string | null,  page: number = 1, limit: number = 5, search=""): Promise<{
+    async getUserPost(userId: string,status: string | null,  page: number = 1, limit: number = 5, search=""): Promise<{
         posts: PostType[] | null;
         totalPosts: number;
         totalPages: number;
@@ -52,7 +52,7 @@ class UserService implements IUserService{
         const skip = (page - 1) * limit;
     
         const postDetails = await this.userRepository.getPostDetails(
-            id, 
+            userId, 
             status, 
             skip, 
             limit,
@@ -69,8 +69,8 @@ class UserService implements IUserService{
         return updateStatus
     }
 
-    async getExpertById(id: string):Promise<ExpertDocument | null >{
-        const data = await this.userRepository.findExpertById(id)
+    async getExpertById(expertId: string):Promise<ExpertDocument | null >{
+        const data = await this.userRepository.findExpertById(expertId)
         return data;
     }
 

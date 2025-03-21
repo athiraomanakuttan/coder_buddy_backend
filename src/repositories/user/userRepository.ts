@@ -19,9 +19,9 @@ interface UserRepository {
         totalPosts: number;
         totalPages: number;
     } | null>
-    countPosts(id:string,status:string  | null):Promise<number>
+    countPosts(postId:string,status:string  | null):Promise<number>
     updatePostStatus(userId :  string, id:string, status:number):Promise<PostType | null>
-    findExpertById(id:string):Promise<ExpertDocument | null >
+    findExpertById(expertId:string):Promise<ExpertDocument | null >
     updatePostData(postId: string, postData:PostType):Promise<PostType | null>
     getPostReport(userId: string):Promise<MonthlyUserPostReportType[] | null>
     getPostCount(userId: string):Promise<PostCountType | null>

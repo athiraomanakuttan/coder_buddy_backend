@@ -33,22 +33,22 @@ async countExpertPendingDetails(status: number = 0): Promise<number> {
     return count;
 }
 
-async getUserById(id: string): Promise<UserType | null> {
-    const userData =  await User.findOne({_id:id})
+async getUserById(userId: string): Promise<UserType | null> {
+    const userData =  await User.findOne({_id:userId})
     return userData
 }
 
-async updateUserById(id: string, data: UserType): Promise<UserType | null> {
-    const userData = await User.findOneAndUpdate({ _id: id }, data, { new: true });
+async updateUserById(userId: string, data: UserType): Promise<UserType | null> {
+    const userData = await User.findOneAndUpdate({ _id: userId }, data, { new: true });
     return userData;
 }
 
-async getExpertById(id: string): Promise<ExpertDocument | null> {
-    const expertData = await Expert.findOne({_id :  id})
+async getExpertById(expertId: string): Promise<ExpertDocument | null> {
+    const expertData = await Expert.findOne({_id :  expertId})
         return expertData;
 }
-async updateExpertById(id: string, data: ExpertDocument): Promise<ExpertDocument | null> {
-    const updateExpert = await Expert.findOneAndUpdate({_id : id},data,{new:true})
+async updateExpertById(expertId: string, data: ExpertDocument): Promise<ExpertDocument | null> {
+    const updateExpert = await Expert.findOneAndUpdate({_id : expertId},data,{new:true})
     return updateExpert
 }
 

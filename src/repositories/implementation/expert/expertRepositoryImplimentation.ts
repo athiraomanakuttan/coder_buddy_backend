@@ -16,9 +16,9 @@ class ExpertRepositoryImplementation implements IExpertRepository {
         }
     }
 
-    async getExpertById(id: string): Promise<ExpertDocument | null> {
+    async getExpertById(expertId: string): Promise<ExpertDocument | null> {
         try {
-            return await Expert.findOne({ _id: id });
+            return await Expert.findOne({ _id: expertId });
         } catch (error) {
             console.error("Error fetching expert by ID:", error);
             return null;
@@ -37,9 +37,9 @@ class ExpertRepositoryImplementation implements IExpertRepository {
             return null;            
         }
     }
-    async updateExpert(id: string, data: ExpertDocument): Promise<ExpertDocument | null> {
+    async updateExpert(expertId: string, data: ExpertDocument): Promise<ExpertDocument | null> {
             const updatedExpert = await Expert.findOneAndUpdate(
-                { _id: id },          
+                { _id: expertId },          
                 { $set: data },     
                 { new: true }        
             );
@@ -144,8 +144,8 @@ class ExpertRepositoryImplementation implements IExpertRepository {
           return postCount
       }
       
-      async addComment(id: string, data: CommentType): Promise<PostType | null> {
-         const comment = await Post.findOneAndUpdate({_id: id},{$push :{comments:data} },{ new: true })
+      async addComment(postId: string, data: CommentType): Promise<PostType | null> {
+         const comment = await Post.findOneAndUpdate({_id: postId},{$push :{comments:data} },{ new: true })
          return comment
       }
       async deleteComment(commentId: string, expertId: string, postId: string): Promise<PostType | null> {
