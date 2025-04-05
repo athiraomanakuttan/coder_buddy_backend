@@ -5,7 +5,7 @@ interface ITechnology{
 createTechnology(title: string):Promise<TechnologyType | null >
 getTechnologyByTitle(title: string):Promise< TechnologyType | null >
 getAllTechnologies(page:number,limit:number):Promise< TechnologyOutput | null>
-updateTechnology(id:string,data:TechnologyType):Promise<TechnologyType | null >
+updateTechnology(technologyId:string,data:TechnologyType):Promise<TechnologyType | null >
 
 }
 

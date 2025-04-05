@@ -365,11 +365,8 @@ class UserController {
       }
   
       try {
-        // Verify the refresh token using your existing method
-        // Pass true to indicate it's a refresh token
         const decoded = JwtUtility.verifyToken(refreshToken, true) as { email: string; id: string };
   
-        // Generate a new access token
         const accessToken = JwtUtility.generateAccessToken({
           email: decoded.email,
           id: decoded.id,

@@ -42,9 +42,9 @@ class TechnologyController{
     }
 
     async updateTechnology(req:Request, res:Response):Promise<void>{
-        const {id,...data} = req.body
+        const {technologyId,...data} = req.body
         try {
-            const updatedData = await this._technolgyService.updateTechnologies(id,data)
+            const updatedData = await this._technolgyService.updateTechnologies(technologyId,data)
              if(updatedData)
                 res.status(STATUS_CODES.OK).json({status: true, message:"updated sucessfully",data:updatedData})
         } catch (error) {

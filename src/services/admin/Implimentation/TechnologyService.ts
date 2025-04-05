@@ -21,8 +21,8 @@ class TechnologyService implements ITechnologyService{
         return this._technologyRepository.getAllTechnologies(page,limit)
     }
 
-    async updateTechnologies(id: string, data: TechnologyType): Promise<TechnologyType | null> {
-        return this._technologyRepository.updateTechnology(id,data)
+    async updateTechnologies(technologyId: string, data: TechnologyType): Promise<TechnologyType | null> {
+        return this._technologyRepository.updateTechnology(technologyId,data)
     }
 }
 

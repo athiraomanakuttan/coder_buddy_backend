@@ -105,19 +105,19 @@ class AdminController{
     }
 
     async changeUserStatus(req:Request , res:Response):Promise<void>{
-        const {id, status} = req.body
-        if(!id || status===undefined){
+        const {userId, status} = req.body
+        if(!userId || status===undefined){
             res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
             return;
         }
-        const checkUser =  await this.adminService.getUserById(id)
+        const checkUser =  await this.adminService.getUserById(userId)
         if(!checkUser){
             res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user not found"})
             return
         }
         try {
             const data ={ status: status} as UserType
-            const updateUser =  await this.adminService.updateUserById(id,data)
+            const updateUser =  await this.adminService.updateUserById(userId,data)
             res.status(STATUS_CODES.OK).json({status:true, message:"user status updated successfully"})
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
@@ -126,9 +126,9 @@ class AdminController{
     }
 
     async getExpertDetails(req:Request , res: Response):Promise<void>{
-        const { id } = req.params
+        const { expertId } = req.params
         try {
-            const expertData =  await this.adminService.getExpertById(id)
+            const expertData =  await this.adminService.getExpertById(expertId)
             res.status(STATUS_CODES.OK).json({status: true, message:"data fetched successfully", data:expertData})
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
@@ -137,14 +137,14 @@ class AdminController{
     }
 
     async changeExpertStatus(req:Request, res:Response):Promise<void>{
-        const {id} = req.body
-        if(!id ){
+        const {expertId} = req.body
+        if(!expertId ){
             res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INVALID_INPUT})
             return;
         }
         try {
             const data = {status : 0 } as ExpertDocument 
-            const updateExpert = await this.adminService.updateExpertById(id,data) 
+            const updateExpert = await this.adminService.updateExpertById(expertId,data) 
             res.status(STATUS_CODES.OK).json({status:true, message:"expert rejected",data:updateExpert})
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR})

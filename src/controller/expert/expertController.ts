@@ -77,7 +77,8 @@ class ExpertController{
               sameSite: "lax",
               maxAge: 1 * 60 * 60 * 1000,
             });
-            res.status(STATUS_CODES.OK).json({status:true, message:"Login successfull",data:{accessToken,existExpert}});
+            const { password, ...expertData } = existExpert.toObject()
+            res.status(STATUS_CODES.OK).json({status:true, message:"Login successfull",data:{accessToken,existExpert:expertData}});
         }
      }
 

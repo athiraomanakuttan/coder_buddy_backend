@@ -9,19 +9,23 @@ class AdminRepositoryImplimentation implements IAdminRepository{
         return await User.find()
             .skip(skip)
             .limit(limit)
-            .sort({ createdAt: -1 }); 
+            .sort({ createdAt: -1 })
+            .select('-password')
     }
 async getExpertDetails(): Promise<ExpertDocument[] | ExpertDocument | null> {
-    const expertData = await Expert.find({status:{$in:[0,2]}})
-    return expertData
-    
+    const expertData = await Expert.find({ status: { $in: [0, 2] } })
+        .select('-password'); 
+    console.log("expertData", expertData);
+    return expertData;
 }
-async getExpertPendingDetails(status:number = 0 ,skip: number = 0, limit: number = 10): Promise<ExpertDocument[]> {
+async getExpertPendingDetails(status: number = 0, skip: number = 0, limit: number = 10): Promise<ExpertDocument[]> {
     try {
-        return await Expert.find({isMeetingScheduled : 0 , isVerified : status})
+        return await Expert.find({ isMeetingScheduled: 0, isVerified: status })
             .skip(skip)
             .limit(limit)
-            .sort({ createdAt: -1 }); 
+            .sort({ createdAt: -1 })
+            .select('-password')
+
     } catch (error) {
         console.error('Error fetching expert details:', error);
         throw error;
@@ -34,21 +38,21 @@ async countExpertPendingDetails(status: number = 0): Promise<number> {
 }
 
 async getUserById(userId: string): Promise<UserType | null> {
-    const userData =  await User.findOne({_id:userId})
+    const userData =  await User.findOne({_id:userId}).select('-password')
     return userData
 }
 
 async updateUserById(userId: string, data: UserType): Promise<UserType | null> {
-    const userData = await User.findOneAndUpdate({ _id: userId }, data, { new: true });
+    const userData = await User.findOneAndUpdate({ _id: userId }, data, { new: true }).select('-password');
     return userData;
 }
 
 async getExpertById(expertId: string): Promise<ExpertDocument | null> {
-    const expertData = await Expert.findOne({_id :  expertId})
+    const expertData = await Expert.findOne({_id :  expertId}).select('-password')
         return expertData;
 }
 async updateExpertById(expertId: string, data: ExpertDocument): Promise<ExpertDocument | null> {
-    const updateExpert = await Expert.findOneAndUpdate({_id : expertId},data,{new:true})
+    const updateExpert = await Expert.findOneAndUpdate({_id : expertId},data,{new:true}).select('-password')
     return updateExpert
 }
 

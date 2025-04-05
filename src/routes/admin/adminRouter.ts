@@ -45,7 +45,7 @@ router.put('/changeUserStatus',authenticationMiddleware  as any,isAdmin,(req,res
 router.get('/get-user-profile/:id', authenticationMiddleware as any, isAdmin,  (req,res)=>adminController.getUserDataById(req,res))
 
 router.get('/expert-details', authenticationMiddleware  as any, isAdmin, (req,res)=> adminController.getExpertData(req,res) )
-router.get('/get-expert/:id',authenticationMiddleware  as any, isAdmin, (req,res)=> adminController.getExpertDetails(req,res))
+router.get('/get-expert/:expertId',authenticationMiddleware  as any, isAdmin, (req,res)=> adminController.getExpertDetails(req,res))
 router.put('/reject-expert',authenticationMiddleware  as any, isAdmin,(req,res)=> adminController.changeExpertStatus(req,res))
 router.put('/change-expert-status', authenticationMiddleware as any, isAdmin, (req,res)=> adminController.enableDisableStatus(req,res))
 
