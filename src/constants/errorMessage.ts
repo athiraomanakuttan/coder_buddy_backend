@@ -7,5 +7,6 @@ export enum ERROR_MESSAGES {
     NOT_FOUND= "The requested resource could not be found.",
     INVALID_INPUT= "The request contains invalid data.",
     UPDATION_FAILED = "Unable to update data",
-    DUPLICATE_DATA= "Data already exist"
+    DUPLICATE_DATA= "Data already exist",
+    USER_NOT_FOUND = "user not found"
 }

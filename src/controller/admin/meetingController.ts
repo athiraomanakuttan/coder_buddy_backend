@@ -7,6 +7,7 @@ import IMeetingService from "../../services/admin/IMeetingService";
 import IAdminService from "../../services/admin/IAdminService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
 class MeetingController{
     private meetingService : IMeetingService;
     private adminService : IAdminService;
@@ -25,14 +26,14 @@ class MeetingController{
                 if(createMeet){
                     const isMeetingScheduled = 1;
                     const updateExpert =  await this.adminService.updateExpertById(expertId,{isMeetingScheduled} as ExpertDocument)
-                    res.status(STATUS_CODES.OK).json({status: true, message: "Meeting created successfully", data:createMeet})
+                    res.status(STATUS_CODES.OK).json({status: true, message: "Meeting created successfully", data:createMeet} as CustomResponse<ExpertDocument>)
                     return;
                 }
                 else
-                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+                res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
 
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
 
     }
@@ -47,9 +48,9 @@ class MeetingController{
                 res.status(STATUS_CODES.OK).json({status: true, message : "data Fetched sucessfully", data:meetingData, count:totalCount, totalPages: pageCount})
                 return
             }
-           res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : ERROR_MESSAGES.NOT_FOUND}) 
+           res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : ERROR_MESSAGES.NOT_FOUND} as CustomResponse<null>) 
         } catch (error:any) {
-           res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR}) 
+           res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>) 
         }
     }   
 
@@ -60,13 +61,13 @@ class MeetingController{
             if(updateExpert){
                 const updateMeeting  =  await this.meetingService.updateMeetingByExpertId(expertId,meetingId)
                 if(updateMeeting){
-                    res.status(STATUS_CODES.OK).json({status: true, message : "Expert approved"})
+                    res.status(STATUS_CODES.OK).json({status: true, message : "Expert approved"} as CustomResponse<null>)
                     return;
                 }
             }
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : ERROR_MESSAGES.UPDATION_FAILED})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: true, message : ERROR_MESSAGES.UPDATION_FAILED} as CustomResponse<null>)
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
     }
     
