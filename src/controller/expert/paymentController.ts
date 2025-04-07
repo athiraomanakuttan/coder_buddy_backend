@@ -11,6 +11,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
 import { PaymentType } from "../../model/expert/paymentModel";
 import { WalletDataType } from "../../model/expert/wallet.model";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 
 const razorpay = new Razorpay({
@@ -31,7 +32,7 @@ class PaymentController{
         const expertId = req.id
         const {title , amount , userId, postId} = req.body
         if(!title || !userId || !expertId){
-             res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create meeting link"} as  CustomResponse<null>)
+             res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.UNABLE_TO_CREATE} as  CustomResponse<null>)
              return 
         }
         if(!amount || Number(amount)>10000 || Number(amount)<=0){
@@ -41,10 +42,10 @@ class PaymentController{
         try {
             const response =  await this.paymentService.createMeetingLink(title,Number(amount),userId,expertId, postId)
             if(!response){
-                res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create meeting link"} as  CustomResponse<null>)
+                res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.UNABLE_TO_CREATE} as  CustomResponse<null>)
                 return
             }
-            res.status(STATUS_CODES.OK).json({status:true,message:"meeting link created sucessfully", data:response} as  CustomResponse<PaymentType>)
+            res.status(STATUS_CODES.OK).json({status:true,message:SUCESS_MESSAGE.CREATION_SUCESS, data:response} as  CustomResponse<PaymentType>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>)
         }   
@@ -61,7 +62,7 @@ class PaymentController{
         try {
             const paymentDetails =  await this.paymentService.getPaymentList(userId, Number(status), Number(page), Number(count))
             if(paymentDetails)
-            res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:paymentDetails} as  CustomResponse<PaymentListResponseType>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:paymentDetails} as  CustomResponse<PaymentListResponseType>)
                 
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>)
@@ -74,7 +75,7 @@ class PaymentController{
         try {
             const paymentDetails = await this.paymentService.getPaymentById(id) 
             if(paymentDetails){
-                res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfull",data:paymentDetails}  as  CustomResponse<PaymentType>)
+                res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS,data:paymentDetails}  as  CustomResponse<PaymentType>)
             }
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR}  as  CustomResponse<null>)
@@ -149,13 +150,13 @@ class PaymentController{
     
             res.status(STATUS_CODES.OK).json({
                 status: false,
-                message: 'Payment verified successfully'
+                message: SUCESS_MESSAGE.PAYMENT_VERIFIED
             } as  CustomResponse<null>);
         } else {
             await this.paymentService.updatePaymentById(paymentId, 0, null);
             res.status(STATUS_CODES.BAD_REQUEST).json({
                 status: false,
-                message: 'Payment verification failed'
+                message: ERROR_MESSAGES.PAYMENT_VERIFICATION_FAILED
             }  as  CustomResponse<null>);
         }
     };
@@ -172,7 +173,7 @@ class PaymentController{
 
             const walletData = await this.paymentService.getWalletByExpertId(expertId)
             if(walletData){
-                res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data:walletData}  as  CustomResponse<WalletDataType>)
+                res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:walletData}  as  CustomResponse<WalletDataType>)
             }
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR}  as  CustomResponse<null>)
@@ -185,18 +186,18 @@ class PaymentController{
             const { amount, UPIid } = req.body;
     
             if (!expertId) {
-                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Invalid user ID" }  as  CustomResponse<null>);
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT }  as  CustomResponse<null>);
                 return;
             }
     
             const walletData = await this.paymentService.getWalletByExpertId(expertId);
             if (!walletData) {
-                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Your wallet is empty" }  as  CustomResponse<null>);
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.WALLET_EMPTY }  as  CustomResponse<null>);
                 return;
             }
     
             if (amount <= 0 || amount > walletData.amount) {
-                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Invalid amount" }  as  CustomResponse<null>);
+                res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_AMOUNT }  as  CustomResponse<null>);
                 return;
             }
      
@@ -214,14 +215,14 @@ class PaymentController{
     
             res.status(STATUS_CODES.OK).json({
                 status: true,
-                message: "Test payout initiated successfully",
+                message: SUCESS_MESSAGE.PAYOUT_INITIATED,
             }  as  CustomResponse<null>);
     
         } catch (error: any) {
-            console.error("Test Payout Error:", error.response?.data || error);
+            console.error(" Payout Error:", error.response?.data || error);
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
                 status: false,
-                message: error.response?.data?.message || "Something went wrong"
+                message: error.response?.data?.message || ERROR_MESSAGES.INTERNAL_SERVER_ERROR
             }  as  CustomResponse<null>);
         }
     }

@@ -6,6 +6,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
 import { UserType } from "../../model/user/userModel";
 import { ExpertDocument } from "../../model/expert/expertModel";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 class ProfileController{
     private profileService:IExpertService;
@@ -24,13 +25,13 @@ class ProfileController{
             if (userData?.status === 1) {
           res.status(STATUS_CODES.OK).json({
             status: true,
-            message: "User data fetched successfully",
+            message: SUCESS_MESSAGE.DATA_FETCH_SUCESS,
             data: userData,
           } as CustomResponse<UserType>);
         } else {
           res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
-            message: "User is blocked.",
+            message: ERROR_MESSAGES.BLOCKD_USER,
             data: null,
           } as CustomResponse<null>);
         }
@@ -79,14 +80,14 @@ class ProfileController{
             if (updatedProfile) {
                 res.status(STATUS_CODES.OK).json({
                     status: true,
-                    message: "Profile updated successfully",
+                    message: SUCESS_MESSAGE.UPDATION_SUCESS,
                     data: updatedProfile,
                 } as CustomResponse<ExpertDocument>);
                 return;
             } else {
                 res.status(STATUS_CODES.NOT_FOUND).json({
                     status: false,
-                    message: "User profile not found",
+                    message: ERROR_MESSAGES.USER_NOT_FOUND,
                     data: null,
                 } as CustomResponse<null>);
                 return;

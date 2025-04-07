@@ -5,6 +5,7 @@ import IPaymentService from "../../services/expert/IPaymentService"
 import { STATUS_CODES } from "../../constants/statusCode"
 import { ERROR_MESSAGES } from "../../constants/errorMessage"
 import { CustomResponse } from "../../utils/customResponse"
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage"
 
 class ReportController{
 private _meetingService : IMeetingService
@@ -25,7 +26,7 @@ async getExpertReport(req:CustomType, res:Response):Promise<void>{
         const meetingData = await this._meetingService.getMeetingDetails(expertId)
         const meetingRating = await this._meetingService.getExpertRating(expertId)
         const walletBalance = await this._paymentService.getWalletBalance(expertId)
-        res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data :{...meetingData, meetingRating:meetingRating?.toFixed(1), walletBalance}} as CustomResponse<{}>)
+        res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data :{...meetingData, meetingRating:meetingRating?.toFixed(1), walletBalance}} as CustomResponse<{}>)
     } catch (error) {
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }

@@ -5,6 +5,7 @@ import IConcernService from "../../services/admin/IConcernService"
 import IMeetingService from "../../services/admin/IMeetingService"
 import { Request, Response } from "express"
 import { CustomResponse } from "../../utils/customResponse"
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage"
 class ReportController {
     private _adminService :IAdminService
     private _meetingService : IMeetingService
@@ -22,7 +23,7 @@ class ReportController {
             const scheduledMeeting = await this._meetingService.getScheduledMeeting()
             const openTicket = await this._concernService.getOpenTicketCount()
             const totalProfit = await this._adminService.getTotalProfit()
-            res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfully", data:{totalClient, totalExpert,totalProfit,scheduledMeeting,openTicket}} as CustomResponse<{}>)
+            res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:{totalClient, totalExpert,totalProfit,scheduledMeeting,openTicket}} as CustomResponse<{}>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }

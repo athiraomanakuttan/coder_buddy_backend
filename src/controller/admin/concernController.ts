@@ -5,6 +5,7 @@ import IConcernService from "../../services/admin/IConcernService"
 import { Request,Response } from "express"
 import { CustomResponse } from "../../utils/customResponse"
 import { ConcernResponseDataType } from "../../types/type"
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage"
 class ConcernController{
     private _concernService: IConcernService
     constructor(concernService: IConcernService){
@@ -16,7 +17,7 @@ class ConcernController{
         try {
             const concernData = await this._concernService.getConcernData(Number(status),Number(page),Number(limit))
             if(concernData)
-                res.status(STATUS_CODES.OK).json({status: true, message:"fetched concern data", data:concernData} as CustomResponse<ConcernResponseDataType>)
+                res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:concernData} as CustomResponse<ConcernResponseDataType>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
@@ -37,7 +38,7 @@ class ConcernController{
 
         try {
             const concenData = await this._concernService.updateConcernStatus(concernId, Number(status))
-            res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data: concenData} as CustomResponse<null>)
+            res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.UPDATION_SUCESS, data: concenData} as CustomResponse<null>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }

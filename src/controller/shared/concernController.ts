@@ -7,6 +7,7 @@ import { uploadImageToCloudinary, uploadVideoToCloudinary } from "../../utils/up
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 class ConcernController{
     private _concernService: IConcernService
@@ -45,7 +46,7 @@ class ConcernController{
 
             const newConcern =  await this._concernService.createConcern(concernData)
             if(newConcern){
-                res.status(STATUS_CODES.OK).json({status: false, message:"concer created sucessfully"} as CustomResponse<null>)
+                res.status(STATUS_CODES.OK).json({status: false, message:SUCESS_MESSAGE.CREATION_SUCESS} as CustomResponse<null>)
             }
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -65,7 +66,7 @@ class ConcernController{
         try {
             const concernData = await this._concernService.getUserConcers(userId,Number(status))
             if(concernData){
-                res.status(STATUS_CODES.OK).json({status: true, message:"data fetched suceesfully", data:concernData} as CustomResponse<ConcernDataType[]>)
+                res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:concernData} as CustomResponse<ConcernDataType[]>)
             }
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -78,7 +79,7 @@ class ConcernController{
         try {
             const data = {message: comment, userType } as MessageType
             const concernData = await this._concernService.createConcernReplay(data,meetingId)
-            res.status(STATUS_CODES.OK).json({status:true, message:"comment added sucessfully", data:concernData} as CustomResponse<ConcernDataType>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.CREATION_SUCESS, data:concernData} as CustomResponse<ConcernDataType>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }

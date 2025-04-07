@@ -5,6 +5,7 @@ import { STATUS_CODES } from "../../constants/statusCode"
 import { ERROR_MESSAGES } from "../../constants/errorMessage"
 import { CustomResponse } from "../../utils/customResponse"
 import { MeetingType } from "../../model/admin/meetingModel"
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage"
 interface CustomType extends Request{
     id?:string
 }
@@ -22,7 +23,7 @@ class MeetingController{
         }
         try {
             const meetingDetails = await this.meetngService.getAdminExpertMeeting(expertId)
-            res.status(STATUS_CODES.OK).json({status:true, message:"data fetched successfully ", data: meetingDetails} as  CustomResponse<MeetingType>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data: meetingDetails} as  CustomResponse<MeetingType>)
             
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>)
@@ -40,10 +41,10 @@ class MeetingController{
         try {
             const getMeeting = await this.meetngService.verifymeeting(meetingId)
             if(getMeeting){
-                res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfully",data:getMeeting} as  CustomResponse<MeetingType>)
+                res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS,data:getMeeting} as  CustomResponse<MeetingType>)
                 return
             }
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:"Invalid meeting"} as  CustomResponse<null>)
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.INVALID_MEETING} as  CustomResponse<null>)
 
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>)

@@ -6,6 +6,7 @@ import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 export interface CustomRequest extends Request {
     id?: string; 
   }
@@ -26,7 +27,7 @@ class ChatController {
                 return
             }
            const chatList = await this.chatService.getUserChatList(id);
-           res.status(STATUS_CODES.OK).json({status:true,message:"chat list fetched successfully",data: chatList} as CustomResponse<ChatType>)
+           res.status(STATUS_CODES.OK).json({status:true,message:SUCESS_MESSAGE.DATA_FETCH_SUCESS,data: chatList} as CustomResponse<ChatType>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
@@ -44,11 +45,11 @@ class ChatController {
                 const userDetails = await this.userService.getUserById(senderId)
                 const expertDetails = await this.expertService.getExpertById(receiverId)
                 if(!userDetails){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"user data is empty, unable to create new chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.ERROR_CREATE_CHAT_USER} as CustomResponse<null>)
                     return
                 }
                 if(!expertDetails){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"expert data is empty, unable to create new chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.ERROR_CREATE_CHAT_EXPERT} as CustomResponse<null>)
                     return
                 }
                 const participents= [
@@ -67,13 +68,13 @@ class ChatController {
                 ] as ParticipentsType[]
                 const newChat = await this.chatService.createNewChat(participents, postId)
                 if(!newChat){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.UNABLE_TO_CREATE} as CustomResponse<null>)
                     return
                 }
                 chatId = newChat._id
             }
             const conversation =  await this.chatService.creatConversation(chatId,senderId,receiverId,message)
-            res.status(STATUS_CODES.OK).json({status:true, message:"conversation created sucessfully", data: conversation} as CustomResponse<ChatType>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.CREATION_SUCESS, data: conversation} as CustomResponse<ChatType>)
          } catch (error){
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
          }
@@ -87,7 +88,7 @@ class ChatController {
                 return
             }
             const chatData = await this.chatService.getChatData(chatId)
-            res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:chatData} as CustomResponse<ChatType>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:chatData} as CustomResponse<ChatType>)
         } catch (error) {
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
@@ -103,17 +104,17 @@ class ChatController {
          try {
                 const existChat =  await this.chatService.getChatById(expertId,senderId,postId)
                 if(existChat && existChat.length){
-                    res.status(STATUS_CODES.OK).json({status:true, message:"data fetched sucessfully", data:existChat} as CustomResponse<ChatType[]>)
+                    res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:existChat} as CustomResponse<ChatType[]>)
                     return;
                 }
                 const userDetails = await this.userService.getUserById(senderId)
                 const expertDetails = await this.expertService.getExpertById(expertId)
                 if(!userDetails){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"user data is empty, unable to create new chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.ERROR_CREATE_CHAT_USER} as CustomResponse<null>)
                     return
                 }
                 if(!expertDetails){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"expert data is empty, unable to create new chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.ERROR_CREATE_CHAT_EXPERT} as CustomResponse<null>)
                     return
                 }
                 const participents= [
@@ -131,9 +132,9 @@ class ChatController {
                     }
                 ] as ParticipentsType[]
                 const newChat = await this.chatService.createNewChat(participents, postId)
-                res.status(STATUS_CODES.OK).json({status:true,message:"data fetched sucessfully",data:newChat} as CustomResponse<null>);
+                res.status(STATUS_CODES.OK).json({status:true,message:SUCESS_MESSAGE.DATA_FETCH_SUCESS,data:newChat} as CustomResponse<null>);
                 if(!newChat){
-                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:"unable to create chat"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.BAD_REQUEST).json({status:false,message:ERROR_MESSAGES.ERROR_CHAT_CREATION} as CustomResponse<null>)
                     return
                 }
             }

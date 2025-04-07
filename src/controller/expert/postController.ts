@@ -5,6 +5,7 @@ import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 export interface CustomRequest extends Request {
     id ?: string;  
@@ -35,7 +36,7 @@ class PostController {
       const totalPost = await this.postService.getPostCount({status:0,technologies: { $in: expertDetails.skills }})
       const pageCount = Math.ceil(totalPost / Number(limit))
         if(posts){
-            res.status(STATUS_CODES.OK).json({ status: true, message :"post data fetched statusfully",data: posts, pagination:{currentPage:page,totalPages:pageCount} });
+            res.status(STATUS_CODES.OK).json({ status: true, message :SUCESS_MESSAGE.DATA_FETCH_SUCESS,data: posts, pagination:{currentPage:page,totalPages:pageCount} });
             return
         }
     } catch (error) {
@@ -56,10 +57,10 @@ class PostController {
     try {
         const comment  =  await this.postService.addComment(data.postId , commentData)
         if(comment){
-          res.status(STATUS_CODES.OK).json({status: true ,message:"Comment added" } as CustomResponse<null>)
+          res.status(STATUS_CODES.OK).json({status: true ,message: SUCESS_MESSAGE.CREATION_SUCESS } as CustomResponse<null>)
           return;
         }
-        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"unable to add comment"})
+        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.UNABLE_TO_CREATE})
           
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status :  false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -76,10 +77,10 @@ class PostController {
     try {
       const commentDelete = await this.postService.commentDelete(commentId,expertId,postId)
       if(commentDelete){
-      res.status(STATUS_CODES.OK).json({status: true ,  message : "comment removed sucessfully"})
+      res.status(STATUS_CODES.OK).json({status: true ,  message : SUCESS_MESSAGE.SUCESS_DELETION})
         return
       }
-      res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message : "unable to delete comment"})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message : ERROR_MESSAGES.FAILED_DELETION})
 
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false ,  message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)

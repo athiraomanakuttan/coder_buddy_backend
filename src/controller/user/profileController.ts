@@ -6,6 +6,7 @@ import {STATUS_CODES } from '../../constants/statusCode'
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
 import { ExpertDocument } from "../../model/expert/expertModel";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 class ProfileController {
   private profileService: UserService;
@@ -20,18 +21,17 @@ class ProfileController {
         if (userData?.status === 1) {
           res.status(STATUS_CODES.OK).json({
             status: true,
-            message: "User data fetched successfully",
+            message: SUCESS_MESSAGE.DATA_FETCH_SUCESS,
             data: userData,
           } as CustomResponse<UserType>);
         } else {
           res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
-            message: "User is blocked.",
+            message: ERROR_MESSAGES.BLOCKD_USER,
             data: null,
           } as CustomResponse<null>);
         }
       } catch (error) {
-        console.error("Error retrieving profile:", error);
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
           status: false,
           message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -112,7 +112,7 @@ class ProfileController {
           .status(STATUS_CODES.OK)
           .json({
             status: true,
-            message: "Profile updated successfully",
+            message: SUCESS_MESSAGE.UPDATION_SUCESS,
             data: updateUser,
           } as CustomResponse<UserType>);
       } else {
@@ -137,10 +137,10 @@ class ProfileController {
       }
       const expertData =  await this.profileService.getExpertById(id)
       if(expertData){
-        res.status(STATUS_CODES.OK).json({status: true , message:"profile fetched successfully", data : expertData} as CustomResponse<ExpertDocument>)
+        res.status(STATUS_CODES.OK).json({status: true , message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data : expertData} as CustomResponse<ExpertDocument>)
         return
       }
-      res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:"User is not active with this id"}  as CustomResponse<null>)
+      res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:ERROR_MESSAGES.INVALID_USER}  as CustomResponse<null>)
 
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR}  as CustomResponse<null>);

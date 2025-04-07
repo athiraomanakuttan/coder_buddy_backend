@@ -8,6 +8,7 @@ import IAdminService from "../../services/admin/IAdminService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 class MeetingController{
     private meetingService : IMeetingService;
     private adminService : IAdminService;
@@ -26,7 +27,7 @@ class MeetingController{
                 if(createMeet){
                     const isMeetingScheduled = 1;
                     const updateExpert =  await this.adminService.updateExpertById(expertId,{isMeetingScheduled} as ExpertDocument)
-                    res.status(STATUS_CODES.OK).json({status: true, message: "Meeting created successfully", data:createMeet} as CustomResponse<ExpertDocument>)
+                    res.status(STATUS_CODES.OK).json({status: true, message: SUCESS_MESSAGE.CREATION_SUCESS, data:createMeet} as CustomResponse<ExpertDocument>)
                     return;
                 }
                 else
@@ -45,7 +46,7 @@ class MeetingController{
             if(meetingData){
                 const totalCount = await this.meetingService.getMeetingCount(status)
                 const pageCount = Math.ceil(totalCount/10)
-                res.status(STATUS_CODES.OK).json({status: true, message : "data Fetched sucessfully", data:meetingData, count:totalCount, totalPages: pageCount})
+                res.status(STATUS_CODES.OK).json({status: true, message : SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:meetingData, count:totalCount, totalPages: pageCount})
                 return
             }
            res.status(STATUS_CODES.BAD_REQUEST).json({status : false , message : ERROR_MESSAGES.NOT_FOUND} as CustomResponse<null>) 
@@ -61,7 +62,7 @@ class MeetingController{
             if(updateExpert){
                 const updateMeeting  =  await this.meetingService.updateMeetingByExpertId(expertId,meetingId)
                 if(updateMeeting){
-                    res.status(STATUS_CODES.OK).json({status: true, message : "Expert approved"} as CustomResponse<null>)
+                    res.status(STATUS_CODES.OK).json({status: true, message : SUCESS_MESSAGE.EXPERT_APPROVED} as CustomResponse<null>)
                     return;
                 }
             }

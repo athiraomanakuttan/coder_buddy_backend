@@ -11,6 +11,7 @@ import { CustomRequest } from "./postController";
 import {STATUS_CODES } from '../../constants/statusCode'
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 
 class UserController {
   private userService: IUserService;
@@ -37,7 +38,7 @@ class UserController {
             res
               .status(STATUS_CODES.OK)
               .json({
-                message: "OTP resent to the email.",
+                message: SUCESS_MESSAGE.OTP_RESEND,
                 email: user.email,
                 otp,
               });
@@ -45,11 +46,11 @@ class UserController {
             console.error("Failed to resend OTP:", mailError);
             res
               .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-              .json({status:false, message: "Failed to send verification email." } as CustomResponse<null>);
+              .json({status:false, message: ERROR_MESSAGES.ERROR_SENDING_OTP } as CustomResponse<null>);
           }
           return;
         } else {
-          res.status(STATUS_CODES.CONFLICT).json({ status:false, message: "User already exists." }as CustomResponse<null>);
+          res.status(STATUS_CODES.CONFLICT).json({ status:false, message:ERROR_MESSAGES.USER_ALREADY_EXIST}as CustomResponse<null>);
           return;
         }
       }
@@ -61,13 +62,13 @@ class UserController {
       try {
         await MailUtility.sendMail(user.email, otp, "Verification OTP");
         res.status(STATUS_CODES.OK).json({
-          message: "OTP sent to the email.",
+          message: SUCESS_MESSAGE.OTP_GENERATED,
           email: user.email,
           otp,
         });
       } catch (mailError) {
         console.error("Failed to send OTP:", mailError);
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: "Failed to send verification email." } as CustomResponse<null>);
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.ERROR_SENDING_OTP } as CustomResponse<null>);
       }
     } catch (err: any) {
       console.error("Error during signup:", err);
@@ -80,18 +81,18 @@ class UserController {
   async verifyOtp(req: Request, res: Response): Promise<void> {
     const { otp, storedOTP, storedEmail } = req.body;
     if (!otp) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "OTP is required" } as CustomResponse<null>);
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.INCORRECT_OTP } as CustomResponse<null>);
       return;
     }
 
     if (!otp || !storedOTP || !storedEmail) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "OTP Timeout. Try again" } as CustomResponse<null>);
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.OTP_EXPIRED } as CustomResponse<null>);
       return;
     }
     if (storedOTP === otp) {
       const currentUser = await this.userService.getUserByEmail(storedEmail);
       if (!currentUser) {
-        res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "User not found" } as CustomResponse<null>);
+        res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: ERROR_MESSAGES.USER_NOT_FOUND } as CustomResponse<null>);
         return;
       }
 
@@ -104,12 +105,12 @@ class UserController {
       if (updateUser) {
         res
           .status(STATUS_CODES.OK)
-          .json({status:false, message: "OTP verified successfully", data: updateUser } as CustomResponse<UserType>);
+          .json({status:false, message:SUCESS_MESSAGE.OTP_VERIFIED, data: updateUser } as CustomResponse<UserType>);
       } else {
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: ERROR_MESSAGES.UPDATION_FAILED } as CustomResponse<null>);
       }
     } else {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Incorrect OTP. Please try again" } as CustomResponse<null>);
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INCORRECT_OTP } as CustomResponse<null>);
     }
   }
 
@@ -121,7 +122,7 @@ class UserController {
         .status(STATUS_CODES.BAD_REQUEST)
         .json({
           status: false,
-          message: "Email and password required",
+          message:ERROR_MESSAGES.INVALID_INPUT,
           data: null,
         } as CustomResponse<null>);
       return;
@@ -134,7 +135,7 @@ class UserController {
           .status(STATUS_CODES.UNAUTHORIZED)
           .json({
             status: false,
-            message: "User not found. Please sign up.",
+            message: ERROR_MESSAGES.USER_NOT_FOUND,
             data: null,
           } as CustomResponse<null>);
         return;
@@ -154,7 +155,7 @@ class UserController {
       if (!existUser.status) {
         res
           .status(STATUS_CODES.FORBIDDEN)
-          .json({ status: false, message: "Account is blocked", data: null } as CustomResponse<null>);
+          .json({ status: false, message:ERROR_MESSAGES.BLOCKD_USER, data: null } as CustomResponse<null>);
         return;
       }
 
@@ -168,7 +169,7 @@ class UserController {
           .status(STATUS_CODES.UNAUTHORIZED)
           .json({
             status: false,
-            message: "Invalid email or password",
+            message: ERROR_MESSAGES.INVALID_INPUT,
             data: null,
           } as CustomResponse<null>);
         return;
@@ -196,7 +197,7 @@ class UserController {
 
       res.status(STATUS_CODES.OK).json({
         status: true,
-        message: "Login successful",
+        message: SUCESS_MESSAGE.LOGIN_SUCESS,
         data: { accessToken, refreshToken, user: filteredData },
       } as CustomResponse<{accessToken: string,user:{}}>);
     } catch (error) {
@@ -221,12 +222,12 @@ class UserController {
     if (!getUserData) {
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, message: "user not found. please signup" } as CustomResponse<null>);
+        .json({ status: false, message: ERROR_MESSAGES.USER_NOT_FOUND } as CustomResponse<null>);
       return;
     } else if (getUserData.status !== 1) { 
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, message: "Your account is blocked." } as CustomResponse<null>);
+        .json({ status: false, message: ERROR_MESSAGES.BLOCKD_USER } as CustomResponse<null>);
       return;
     }
     const otp = await OtpUtility.otpGenerator();
@@ -240,7 +241,7 @@ class UserController {
         .status(STATUS_CODES.OK)
         .json({
           status: true,
-          message: "An OTP is send to your email",
+          message: SUCESS_MESSAGE.OTP_GENERATED,
           data: { email, otp },
         } as CustomResponse<{email: string,otp:number}>);
       return;
@@ -249,7 +250,7 @@ class UserController {
         .status(STATUS_CODES.BAD_REQUEST)
         .json({
           status: false,
-          message: "not able to generate OTP. Please try again",
+          message: ERROR_MESSAGES.ERROR_SENDING_OTP,
         } as CustomResponse<null>);
   }
 
@@ -264,10 +265,10 @@ class UserController {
       if (!existUser) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ status: false, message: "user not exist. please signup" });
+          .json({ status: false, message: ERROR_MESSAGES.USER_NOT_FOUND});
         return;
       } else if (existUser.status !== 1) {
-        res.status(STATUS_CODES.FORBIDDEN).json({ status: false, message: "user is blocked" } as CustomResponse<null>);
+        res.status(STATUS_CODES.FORBIDDEN).json({ status: false, message:ERROR_MESSAGES.BLOCKD_USER } as CustomResponse<null>);
         return;
       }
       const hashPassword = (await PasswordUtils.passwordHash(
@@ -281,11 +282,11 @@ class UserController {
       if (updateUser)
         res
           .status(STATUS_CODES.OK)
-          .json({ status: true, message: "password updated sucessfully" } as CustomResponse<null>);
+          .json({ status: true, message: SUCESS_MESSAGE.UPDATION_SUCESS } as CustomResponse<null>);
       else
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ status: false, message: "unable to update password" } as CustomResponse<null>);
+          .json({ status: false, message: ERROR_MESSAGES.UPDATION_FAILED } as CustomResponse<null>);
     } catch (error) {
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
@@ -306,7 +307,7 @@ class UserController {
     }
 
     if(!userData || userData.status!==1){
-      res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"account is blocked "} as CustomResponse<null>)
+      res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.BLOCKD_USER} as CustomResponse<null>)
       return;
     }
     const accessToken = JwtUtility.generateAccessToken({
@@ -323,7 +324,7 @@ class UserController {
       secure: process.env.NODE_ENV === "production",
       maxAge: 1 * 60 * 60 * 1000,
     });
-    res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
+    res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.SIGNUP_SUCESS, data:{userData,token: accessToken}})
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
@@ -338,7 +339,7 @@ class UserController {
       }
       const totalPost = await this.userService.getPostCount(userId)
       const meetingData = await this.userService.getMeetingDetails(userId)
-      res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data : {...totalPost,...meetingData}})
+      res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data : {...totalPost,...meetingData}})
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
@@ -347,7 +348,7 @@ class UserController {
   async getAllTechnologies(req:Request, res:Response):Promise<void>{
     try {
       const data = await this.userService.getAllTechnologies()
-      res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucssfully", data})
+      res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data})
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
@@ -359,7 +360,7 @@ class UserController {
       if (!refreshToken) {
         res.status(STATUS_CODES.UNAUTHORIZED).json({
           status: false,
-          message: 'Refresh token not found',
+          message: ERROR_MESSAGES.REFRESH_TOKEN_NOT_FOUND,
           data: null,
         } as CustomResponse<null>);
         return;
@@ -389,7 +390,7 @@ class UserController {
         // Return the new access token to the client
         res.status(STATUS_CODES.OK).json({
           status: true,
-          message: 'Token refreshed successfully',
+          message: SUCESS_MESSAGE.TOKEN_REFRESHED,
           data: {
             accessToken,
           },
@@ -398,7 +399,7 @@ class UserController {
         // Token verification failed
         res.status(STATUS_CODES.UNAUTHORIZED).json({
           status: false,
-          message: 'Invalid refresh token',
+          message: ERROR_MESSAGES.INVALID_REFRESH,
           data: null,
         } as CustomResponse<null>);
       }

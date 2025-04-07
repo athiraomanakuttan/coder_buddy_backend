@@ -51,7 +51,7 @@ class AdminController{
 
             res.status(STATUS_CODES.OK).json({ 
                 status: true, 
-                message: "Data fetched successfully", 
+                message: SUCESS_MESSAGE.DATA_FETCH_SUCESS, 
                 data: userData,
                 pagination: {
                     currentPage: page,
@@ -85,7 +85,7 @@ class AdminController{
     
             res.status(STATUS_CODES.OK).json({ 
                 status: true, 
-                message: "Data fetched successfully", 
+                message: SUCESS_MESSAGE.DATA_FETCH_SUCESS, 
                 data: {
                     experts,
                     pagination: {
@@ -120,7 +120,7 @@ class AdminController{
         try {
             const data ={ status: status} as UserType
             const updateUser =  await this.adminService.updateUserById(userId,data)
-            res.status(STATUS_CODES.OK).json({status:true, message:"user status updated successfully"} as CustomResponse<null>)
+            res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.UPDATION_SUCESS} as CustomResponse<null>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
@@ -131,7 +131,7 @@ class AdminController{
         const { expertId } = req.params
         try {
             const expertData =  await this.adminService.getExpertById(expertId)
-            res.status(STATUS_CODES.OK).json({status: true, message:"data fetched successfully", data:expertData}as CustomResponse<ExpertDocument>)
+            res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:expertData}as CustomResponse<ExpertDocument>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
 
@@ -147,7 +147,7 @@ class AdminController{
         try {
             const data = {status : 0 } as ExpertDocument 
             const updateExpert = await this.adminService.updateExpertById(expertId,data) 
-            res.status(STATUS_CODES.OK).json({status:true, message:"expert rejected",data:updateExpert} as CustomResponse<ExpertDocument>)
+            res.status(STATUS_CODES.OK).json({status:true, message:ERROR_MESSAGES.EXPERT_REJECTED,data:updateExpert} as CustomResponse<ExpertDocument>)
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
 
@@ -158,16 +158,16 @@ class AdminController{
     async enableDisableStatus(req: Request,res: Response):Promise<void>{
         const {expertId, status}= req.body
         if(!expertId || Number(status)>1 || Number(status)<0){
-            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:"expert id is empty or invalid status" } as CustomResponse<null>)
+            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.INVALID_INPUT } as CustomResponse<null>)
             return
         }
 
         try {
             const changedStatus =  await this.adminService.updateExpertStatus(expertId, Number(status))
             if(changedStatus)
-                res.status(STATUS_CODES.OK).json({status: true, message:"status updated", data:changedStatus} as CustomResponse<ExpertDocument>)
+                res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.UPDATION_SUCESS, data:changedStatus} as CustomResponse<ExpertDocument>)
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:"unable to change status" } as CustomResponse<null>)
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.UNABLE_UPDATION} as CustomResponse<null>)
         }
     }
 
@@ -176,9 +176,9 @@ class AdminController{
         try {
             const userData =  await this.adminService.getUserById(userId)
             if(userData)
-                res.status(STATUS_CODES.OK).json({status:true, message:"user data fetched sucessfully", data:userData} as CustomResponse<UserType>)
+                res.status(STATUS_CODES.OK).json({status:true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:userData} as CustomResponse<UserType>)
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to fetch user data"} as CustomResponse<null>)
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.UNABLE_FETCH} as CustomResponse<null>)
         }
     }    
     
@@ -188,16 +188,16 @@ class AdminController{
             const profitReport = await this.adminService.getMonthlyProfitReport(Number(year) ?? new Date().getFullYear())
             res.status(STATUS_CODES.OK).json({status: true, data: profitReport})
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to fetch the data"} as CustomResponse<null>)
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.UNABLE_FETCH} as CustomResponse<null>)
         }
     }
 
     async getWalletData(req:Request, res:Response):Promise<void>{
         try {
             const data = await this.adminService.getWalletData()
-            res.status(STATUS_CODES.OK).json({status: true, message: "data fetched sucessfully", data} as CustomResponse<null>)
+            res.status(STATUS_CODES.OK).json({status: true, message: SUCESS_MESSAGE.DATA_FETCH_SUCESS, data} as CustomResponse<null>)
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to get the data"} as CustomResponse<null>)
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.UNABLE_FETCH} as CustomResponse<null>)
         }
     }
 }

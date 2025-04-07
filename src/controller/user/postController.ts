@@ -5,6 +5,7 @@ import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
 import { PostType } from "../../model/user/postModel";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 export interface CustomRequest extends Request {
     id?: string; 
   }
@@ -33,7 +34,7 @@ class PostController{
             } catch (uploadError) {
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
                     status: false, 
-                    message: "Failed to upload image" 
+                    message: ERROR_MESSAGES.IMAGE_UPLOAD_FAILED
                 }  as CustomResponse<null>);
                 return;
             }
@@ -46,7 +47,7 @@ class PostController{
         if (uploadPost) {
             res.status(STATUS_CODES.CREATED).json({ 
                 status: true, 
-                message: "Post created successfully", 
+                message: SUCESS_MESSAGE.CREATION_SUCESS, 
                 data: uploadPost 
             }  as CustomResponse<PostType> );
         } else {
@@ -80,7 +81,7 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
         if (userDetails) {
             res.status(STATUS_CODES.OK).json({
                 status: true, 
-                message: "Data fetched successfully", 
+                message: SUCESS_MESSAGE.DATA_FETCH_SUCESS,
                 data: userDetails.posts,
                 pagination: {
                     currentPage: pageNumber,
@@ -104,7 +105,7 @@ async updatePostStatus(req:CustomRequest, res: Response):Promise<void>{
         const postStatus = Number(status)
         const updateStatus =  await this.postService.updatePostStatus(userId,postId, postStatus)
         if(updateStatus){
-            res.status(STATUS_CODES.OK).json({status: true, message:"post updated successfully"} as CustomResponse<null>)
+            res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.CREATION_SUCESS} as CustomResponse<null>)
         }
     } catch (error) {
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -128,7 +129,7 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
         if (userDetails) {
             res.status(STATUS_CODES.OK).json({
                 status: true, 
-                message: "Data fetched successfully", 
+                message: SUCESS_MESSAGE.DATA_FETCH_SUCESS, 
                 data: userDetails.posts,
                 pagination: {
                     currentPage: pageNumber,
@@ -149,7 +150,7 @@ async updatePost(req: CustomRequest, res:Response):Promise<void>{
         if (!data._id) {
             res.status(STATUS_CODES.FORBIDDEN).json({ 
                 status: false, 
-                message: "post Id is empty" 
+                message: ERROR_MESSAGES.INVALID_INPUT 
             });
             return;
         }
@@ -160,7 +161,7 @@ async updatePost(req: CustomRequest, res:Response):Promise<void>{
             } catch (uploadError) {
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
                     status: false, 
-                    message: "Failed to upload image" 
+                    message: ERROR_MESSAGES.IMAGE_UPLOAD_FAILED
                 });
                 return;
             }
@@ -178,7 +179,7 @@ async updatePost(req: CustomRequest, res:Response):Promise<void>{
        try {
         const updatedData =  await this.postService.updatePostDetails(data._id, postData)
         if(updatedData)
-         res.status(STATUS_CODES.OK).json({status: true, message:"post updated"})
+         res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.CREATION_SUCESS})
        } catch (error) {
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
         
@@ -194,7 +195,7 @@ async getPostReport(req:CustomRequest,res: Response):Promise<void>{
     try {
       const postReport  = await this.postService.getUserPostReport(userId)
       if(postReport){
-        res.status(STATUS_CODES.OK).json({status: true, message:"fetched data sucessfully", data:postReport})
+        res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:postReport})
       }
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})

@@ -7,6 +7,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessage";
 import { CustomResponse } from "../../utils/customResponse";
 import { MeetingType } from "../../model/admin/meetingModel";
 import { MeetingUserType } from "../../model/shared/meeting.model";
+import { SUCESS_MESSAGE } from "../../constants/sucessMessage";
 class MeetingController {
   private _meetingService: IMeetingService;
   constructor(meetingService: IMeetingService) {
@@ -25,7 +26,7 @@ class MeetingController {
    try {
     const meetingData =  await this._meetingService.createMeetingLink(title,meetingDate,expertId,userId,postId)
     if(meetingData)
-        res.status(STATUS_CODES.OK).json({status:false, message:"Meeting created", data: meetingData} as CustomResponse<MeetingUserType>)
+        res.status(STATUS_CODES.OK).json({status:false, message:SUCESS_MESSAGE.CREATION_SUCESS, data: meetingData} as CustomResponse<MeetingUserType>)
 
    } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -49,7 +50,7 @@ class MeetingController {
     try {
       const meetingData =  await this._meetingService.getMeetingsById(userId,Number(status),Number(page),Number(limit))
       if(meetingData){
-        res.status(STATUS_CODES.OK).json({ status : false, message:"Sucessfully fetched data", data : {...meetingData}  } as CustomResponse<{}>) 
+        res.status(STATUS_CODES.OK).json({ status : false, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data : {...meetingData}  } as CustomResponse<{}>) 
       }
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>);
@@ -64,10 +65,10 @@ class MeetingController {
       try {
           const meetingData =  await this._meetingService.getMeetingDataById(meetingId, userId as string)
           if(meetingData){
-            res.status(STATUS_CODES.OK).json({status: true ,  message:"meeting data fetched sucessfully", data:meetingData} as CustomResponse<MeetingUserType>)
+            res.status(STATUS_CODES.OK).json({status: true ,  message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:meetingData} as CustomResponse<MeetingUserType>)
           }
           else
-          res.status(STATUS_CODES.OK).json({status: true ,  message:"meeting data fetched sucessfully", data:null} as CustomResponse<null>)
+          res.status(STATUS_CODES.OK).json({status: true ,  message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:null} as CustomResponse<null>)
 
       } catch (error) {
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status : false , message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -84,7 +85,7 @@ class MeetingController {
 try {
   const meetingData = await this._meetingService.getUserMeetings(userId,participentId as string)
   if(meetingData){
-    res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data: meetingData} as CustomResponse<MeetingUserType[]>)
+    res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data: meetingData} as CustomResponse<MeetingUserType[]>)
   }
   
 } catch (error) {
@@ -102,9 +103,9 @@ async getMeetingReport(req:CustomType, res:Response):Promise<void>{
   }
   try {
     const meetingReport  = await this._meetingService.getMeetingReport(userId,Number(year) ?? new Date().getFullYear())
-   res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfully", data:meetingReport } as CustomResponse<MonthlyReport>)
+   res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.DATA_FETCH_SUCESS, data:meetingReport } as CustomResponse<MonthlyReport>)
   } catch (error) {
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:"unable to get the user meeting report "} as CustomResponse<null>)
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.UNABLE_FETCH} as CustomResponse<null>)
     
   }
 } 
@@ -114,7 +115,7 @@ async updateMeetingStatus(req:Request, res:Response):Promise<void>{
   const {meetingId} = req.body
   try {
     await this._meetingService.updateMeetingStatus(meetingId,Number(status))
-    res.status(STATUS_CODES.OK).json({status: true, message:"status updated sucessfully"} as CustomResponse<null>)
+    res.status(STATUS_CODES.OK).json({status: true, message:SUCESS_MESSAGE.UPDATION_SUCESS} as CustomResponse<null>)
 
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
@@ -126,7 +127,7 @@ async updateMeetingRating(req:CustomType,res:Response):Promise<void>{
    const { id, meetingRating, participantBehavior, feedback } = req.body
    try {
     const response = await this._meetingService.createMeetingRating(id,{userId,meetingRating,participantBehavior} as RatingData)
-    res.status(STATUS_CODES.OK).json({status:true, message : "Rating added sucessfully"} as CustomResponse<null>)
+    res.status(STATUS_CODES.OK).json({status:true, message : SUCESS_MESSAGE.CREATION_SUCESS} as CustomResponse<null>)
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
    }
