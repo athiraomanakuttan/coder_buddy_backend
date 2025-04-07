@@ -5,6 +5,7 @@ import { ExpertDocument } from "../../model/expert/expertModel"
 import IAdminService from "../../services/admin/IAdminService"
 import { STATUS_CODES } from "../../constants/statusCode"
 import { ERROR_MESSAGES } from "../../constants/errorMessage"
+import { CustomResponse } from "../../utils/customResponse"
 
 class AdminController{
     private adminService: IAdminService  
@@ -17,16 +18,16 @@ class AdminController{
         const adminEmail = process.env.ADMIN_EMAIL
         const adminPassword = process.env.ADMIN_PASSWORD
         if(!email || !password){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT, data:null} as CustomResponse<null>)
             return
         }
         else if(!adminEmail || !adminPassword ){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT}  as CustomResponse<null>)
             return
         }
         const checkCredentails = this.adminService.adminSignup({email,password},{email:adminEmail,password:adminPassword})
         if(!checkCredentails.status){
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:checkCredentails.message})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:checkCredentails.message}  as CustomResponse<null>)
             return
         }
         const accessToken =  JwtUtility.generateAccessToken({email,role:"admin"})
@@ -35,7 +36,7 @@ class AdminController{
             httpOnly: true,
             secure: false,
             maxAge: 1 * 60 * 60 * 1000,})
-        res.status(STATUS_CODES.OK).json({status: true,message:"login successfull", accessToken})
+        res.status(STATUS_CODES.OK).json({status: true,message:"login successfull", accessToken} )
     }
 
     async getUserData(req: Request, res: Response): Promise<void> {

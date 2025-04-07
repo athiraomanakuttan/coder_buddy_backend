@@ -3,6 +3,9 @@ import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import IExpertService from "../../services/expert/IExpertService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
+import { UserType } from "../../model/user/userModel";
+import { ExpertDocument } from "../../model/expert/expertModel";
 
 class ProfileController{
     private profileService:IExpertService;
@@ -13,7 +16,7 @@ class ProfileController{
     async getExpertDetails(req: Request | any, res:Response):Promise<void>{
         const email  =  req.user
         if(!email){   
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED, data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED, data: null} as CustomResponse<null>)
             return;
         }
         try {
@@ -23,16 +26,16 @@ class ProfileController{
             status: true,
             message: "User data fetched successfully",
             data: userData,
-          });
+          } as CustomResponse<UserType>);
         } else {
           res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
             message: "User is blocked.",
             data: null,
-          });
+          } as CustomResponse<null>);
         }
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
         }
 
     }
@@ -48,7 +51,7 @@ class ProfileController{
                 status: false,
                 message: ERROR_MESSAGES.UNAUTHORIZED,
                 data: null,
-            });
+            } as CustomResponse<null>);
             return;
         }
         try {
@@ -78,14 +81,14 @@ class ProfileController{
                     status: true,
                     message: "Profile updated successfully",
                     data: updatedProfile,
-                });
+                } as CustomResponse<ExpertDocument>);
                 return;
             } else {
                 res.status(STATUS_CODES.NOT_FOUND).json({
                     status: false,
                     message: "User profile not found",
                     data: null,
-                });
+                } as CustomResponse<null>);
                 return;
             }
         } catch (error) {
@@ -94,7 +97,7 @@ class ProfileController{
                 status: false,
                 message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
                 data: null,
-            });
+            } as CustomResponse<null>);
             return;
         }
     }

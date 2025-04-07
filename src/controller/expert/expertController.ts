@@ -9,6 +9,8 @@ import IExpertService from "../../services/expert/IExpertService";
 import IUserService from "../../services/user/IUserService";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
+import { UserType } from "../../model/user/userModel";
 
 class ExpertController{ 
      private expertServece : IExpertService
@@ -22,13 +24,13 @@ class ExpertController{
         const { email, password} =  req.body;
         if(!email.trim() || !password.trim())
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false ,  message:ERROR_MESSAGES.INVALID_INPUT, data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({ status: false ,  message:ERROR_MESSAGES.INVALID_INPUT, data: null}  as CustomResponse<null>)
             return;
         }
         const existExpert = await this.expertServece.getExpertByEmail(email)
         if(existExpert && existExpert.status ===1)
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message:"user already exist. please signIn", data: null})
+            res.status(STATUS_CODES.BAD_REQUEST).json({status: false ,  message:"user already exist. please signIn", data: null}  as CustomResponse<null>)
             return;
         }
         try {
@@ -39,9 +41,9 @@ class ExpertController{
             
                 const otp = await OtpUtility.otpGenerator()
                 const emailSend = await MailUtility.sendMail(email,otp,"Verifivation OTP")
-                res.status(STATUS_CODES.OK).json({status:true, message:"An otp has sent to your email", data : {otp,email}})
+                res.status(STATUS_CODES.OK).json({status:true, message:"An otp has sent to your email", data : {otp,email}}  as CustomResponse<{otp:number,email:string}>)
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null})
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null}  as CustomResponse<null>)
         }
      }
 
@@ -49,22 +51,22 @@ class ExpertController{
         const {email,password} = req.body
         if(!email.trim() || !password.trim())
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"email and password is not in required format",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"email and password is not in required format",data:null}  as CustomResponse<null>);
             return;
         } 
         const existExpert =  await this.expertServece.getExpertByEmail(email)
         if(!existExpert || !existExpert.password)
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user not found. please signup",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"user not found. please signup",data:null}  as CustomResponse<null>);
             return;
         }else if(!existExpert.status){
-          res.status(STATUS_CODES.FORBIDDEN).json({status:false, message:"user is blocked",data:null});
+          res.status(STATUS_CODES.FORBIDDEN).json({status:false, message:"user is blocked",data:null}  as CustomResponse<null>);
           return;
         }
         const checkPassword = await PasswordUtils.comparePassword(password,existExpert.password)
         if(!checkPassword)
         {
-            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"incorrect password",data:null});
+            res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"incorrect password",data:null}  as CustomResponse<null>);
             return;
         }
         else
@@ -78,26 +80,26 @@ class ExpertController{
               maxAge: 1 * 60 * 60 * 1000,
             });
             const { password, ...expertData } = existExpert.toObject()
-            res.status(STATUS_CODES.OK).json({status:true, message:"Login successfull",data:{accessToken,existExpert:expertData}});
+            res.status(STATUS_CODES.OK).json({status:true, message:"Login successfull",data:{ accessToken, existExpert: expertData }} as CustomResponse<{accessToken:string,existExpert:ExpertDocument}>);
         }
      }
 
     async verifyOtp(req: Request, res: Response): Promise<void> {
         const {otp,storedOTP,storedEmail} = req.body;
         if (!otp) {
-          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP is required" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP is required" } as  CustomResponse<null>);
           return;
         }
     
         
         if (!otp || !storedOTP || !storedEmail) {
-          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP Timeout. Try again" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP Timeout. Try again" } as  CustomResponse<null>);
           return;
         }
         if (storedOTP === otp) {
           const currentUser = await this.expertServece.getExpertByEmail(storedEmail);
           if (!currentUser) {
-            res.status(STATUS_CODES.NOT_FOUND).json({ message: "User not found" });
+            res.status(STATUS_CODES.NOT_FOUND).json({ message: "User not found" } as  CustomResponse<null>);
             return;
           }
     
@@ -109,51 +111,51 @@ class ExpertController{
               .status(STATUS_CODES.OK)
               .json({ message: "OTP verified successfully", user: updateUser });
           } else {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.UPDATION_FAILED });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.UPDATION_FAILED } as  CustomResponse<null>);
           }
         } else {
-          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" });
+          res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" } as  CustomResponse<null>);
         }
      }
      async forgotPassword(req: Request, res: Response):Promise<void>{
       const {email}= req.body;
       if(!email){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INVALID_INPUT});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.INVALID_INPUT} as  CustomResponse<null>);
         return
       }
       try {
         const userExist = await this.expertServece.getExpertByEmail(email)
       if(!userExist){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'User notfound. try again'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'User notfound. try again'} as  CustomResponse<null>);
         return
       }
       else if(userExist.status !== 1){
-        res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'Your account is blocked'});
+        res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'Your account is blocked'} as  CustomResponse<null>);
         return
       }
       const otp = await OtpUtility.otpGenerator()
       const emailSend =  await MailUtility.sendMail(email,otp,"Reset Password")
       if(emailSend){
-        res.status(STATUS_CODES.OK).json({status: true, message : 'An OTP has send to you email',data:{email, otp}});
+        res.status(STATUS_CODES.OK).json({status: true, message : 'An OTP has send to you email',data:{email, otp}} as  CustomResponse<{email:string,otp:number}>);
         return
       }
       } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>);
       }
      }
      async updatePassword (req:Request , res : Response):Promise<void>{
       const {email,password}= req.body;
       if(!email || !password){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'user is not autherized'});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'user is not autherized'} as  CustomResponse<null>);
       }
       try {
         const existeUser =  await this.expertServece.getExpertByEmail(email)
         if(!existeUser){
-          res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'unbale to find the account please signup'});
+          res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : 'unbale to find the account please signup'} as  CustomResponse<null>);
           return
         }
         else if(existeUser.status !== 1){
-          res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'your account is blocked'});
+          res.status(STATUS_CODES.FORBIDDEN).json({status: false, message : 'your account is blocked'} as  CustomResponse<null>);
           return
         }
 
@@ -161,14 +163,14 @@ class ExpertController{
         const data = {password : hashPassword} as ExpertDocument;
         const updatePassword = await this.expertServece.updateExpert(existeUser._id, data)
         if(updatePassword){
-        res.status(STATUS_CODES.OK).json({status: true, message : 'password updated successfully'});
+        res.status(STATUS_CODES.OK).json({status: true, message : 'password updated successfully'} as  CustomResponse<null>);
           return 
         }
         else
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.UPDATION_FAILED});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message : ERROR_MESSAGES.UPDATION_FAILED} as  CustomResponse<null>);
 
       } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>);
       }
      }
 
@@ -176,7 +178,7 @@ class ExpertController{
       const { name, email, image } = await req.body;
     
     if (!email) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT } as  CustomResponse<null>);
       return;
     } 
     try {
@@ -200,13 +202,13 @@ class ExpertController{
         sameSite: "lax",
         maxAge: 1 * 60 * 60 * 1000,
       });
-      res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
+      res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}} as  CustomResponse<{userData:UserType,token:string}>)
       return;
     }
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"} as  CustomResponse<null>)
     
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:"unable to signup. Try again"} as  CustomResponse<null>)
     }
      }
 
@@ -214,15 +216,15 @@ class ExpertController{
       const userId = req.params.id
       try {
         if(!userId){
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.INVALID_INPUT})
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:ERROR_MESSAGES.INVALID_INPUT} as  CustomResponse<null>)
         return
         }
 
         const userData  =  await this._userService.getUserById(userId)
         if(userData)
-          res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data: userData})
+          res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data: userData} as  CustomResponse<UserType>)
       } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as  CustomResponse<null>)
       }
      }
 

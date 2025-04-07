@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import { STATUS_CODES } from "../../constants/statusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
+import { PostType } from "../../model/user/postModel";
 export interface CustomRequest extends Request {
     id?: string; 
   }
@@ -21,7 +23,7 @@ class PostController{
             res.status(STATUS_CODES.UNAUTHORIZED).json({ 
                 status: false, 
                 message: ERROR_MESSAGES.UNAUTHORIZED
-            });
+            }  as CustomResponse<null>);
             return;
         }
         let uploadedFileUrl = data.uploads;
@@ -32,7 +34,7 @@ class PostController{
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
                     status: false, 
                     message: "Failed to upload image" 
-                });
+                }  as CustomResponse<null>);
                 return;
             }
         }
@@ -46,12 +48,12 @@ class PostController{
                 status: true, 
                 message: "Post created successfully", 
                 data: uploadPost 
-            });
+            }  as CustomResponse<PostType> );
         } else {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
                 status: false, 
                 message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
-            });
+            } as CustomResponse<null>);
         }
 
     } catch (error) {
@@ -59,7 +61,7 @@ class PostController{
         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
             status: false, 
             message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR
-        });
+        } as CustomResponse<null> );
     }
 }
 
@@ -67,7 +69,7 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
     const userId = req.id ; 
     let { status, page = 1, limit = 5 } = req.body
     if (!userId) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.UNAUTHORIZED })
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.UNAUTHORIZED } as CustomResponse<null>)
         return;
     }
     
@@ -88,24 +90,24 @@ async getPostDetails(req: CustomRequest, res: Response): Promise<void> {
             })
         }
     } catch (error) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR } as CustomResponse<null>)
     }
 }
 async updatePostStatus(req:CustomRequest, res: Response):Promise<void>{
     const userId = req.id;
     const {postId , status} = req.body
     if(!userId || !postId || !status){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:ERROR_MESSAGES.UPDATION_FAILED})
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:ERROR_MESSAGES.UPDATION_FAILED} as CustomResponse<null>)
         return
     }
     try {
         const postStatus = Number(status)
         const updateStatus =  await this.postService.updatePostStatus(userId,postId, postStatus)
         if(updateStatus){
-            res.status(STATUS_CODES.OK).json({status: true, message:"post updated successfully"})
+            res.status(STATUS_CODES.OK).json({status: true, message:"post updated successfully"} as CustomResponse<null>)
         }
     } catch (error) {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
 }
 
@@ -115,7 +117,7 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
     let { status, search } = req.params
 
     if (!userId) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.UNAUTHORIZED })
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.UNAUTHORIZED } as CustomResponse<null>)
         return;
     }
     
@@ -136,7 +138,7 @@ async searchPost(req:CustomRequest , res:Response):Promise<void>{
             })
         }
     } catch (error) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+        res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
 }
 

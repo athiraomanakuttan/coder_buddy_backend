@@ -4,6 +4,8 @@ import { UserType } from "../../model/user/userModel";
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary ";
 import {STATUS_CODES } from '../../constants/statusCode'
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
+import { ExpertDocument } from "../../model/expert/expertModel";
 
 class ProfileController {
   private profileService: UserService;
@@ -20,13 +22,13 @@ class ProfileController {
             status: true,
             message: "User data fetched successfully",
             data: userData,
-          });
+          } as CustomResponse<UserType>);
         } else {
           res.status(STATUS_CODES.BAD_REQUEST).json({
             status: false,
             message: "User is blocked.",
             data: null,
-          });
+          } as CustomResponse<null>);
         }
       } catch (error) {
         console.error("Error retrieving profile:", error);
@@ -34,14 +36,14 @@ class ProfileController {
           status: false,
           message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
           data: null,
-        });
+        } as CustomResponse<null>);
       }
     } else {
       res.status(STATUS_CODES.BAD_REQUEST).json({
         status: false,
         message: ERROR_MESSAGES.UNAUTHORIZED,
         data: null,
-      });
+      } as CustomResponse<null>);
     }
   }
 
@@ -55,7 +57,7 @@ class ProfileController {
           status: false,
           message:ERROR_MESSAGES.UNAUTHORIZED,
           data: null,
-        });
+        } as CustomResponse<null>);
       return;
     }
 
@@ -112,17 +114,17 @@ class ProfileController {
             status: true,
             message: "Profile updated successfully",
             data: updateUser,
-          });
+          } as CustomResponse<UserType>);
       } else {
         res
           .status(STATUS_CODES.NOT_FOUND)
-          .json({ status: false, message: ERROR_MESSAGES.NOT_FOUND, data: null });
+          .json({ status: false, message: ERROR_MESSAGES.NOT_FOUND, data: null } as CustomResponse<null>);
       }
     } catch (error) {
       console.error("Error while updating", error);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null });
+        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR, data: null } as CustomResponse<null>);
     }
   }
 
@@ -130,18 +132,18 @@ class ProfileController {
     const {id} = req.params
     try {
       if(!id){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT});
+        res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:ERROR_MESSAGES.INVALID_INPUT} as CustomResponse<null>);
         return
       }
       const expertData =  await this.profileService.getExpertById(id)
       if(expertData){
-        res.status(STATUS_CODES.OK).json({status: true , message:"profile fetched successfully", data : expertData})
+        res.status(STATUS_CODES.OK).json({status: true , message:"profile fetched successfully", data : expertData} as CustomResponse<ExpertDocument>)
         return
       }
-      res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:"User is not active with this id"})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status: false , message:"User is not active with this id"}  as CustomResponse<null>)
 
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR});
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR}  as CustomResponse<null>);
     }
   }
   

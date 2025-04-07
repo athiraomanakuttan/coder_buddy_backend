@@ -10,6 +10,7 @@ import IUserService from "../../services/user/IUserService";
 import { CustomRequest } from "./postController";
 import {STATUS_CODES } from '../../constants/statusCode'
 import { ERROR_MESSAGES } from "../../constants/errorMessage";
+import { CustomResponse } from "../../utils/customResponse";
 
 class UserController {
   private userService: IUserService;
@@ -22,7 +23,7 @@ class UserController {
       const user = req.body;
 
       if (!user.email || !user.password) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ message: ERROR_MESSAGES.INVALID_INPUT});
+        res.status(STATUS_CODES.BAD_REQUEST).json({ message: ERROR_MESSAGES.INVALID_INPUT} as CustomResponse<null>);
         return;
       }
 
@@ -44,11 +45,11 @@ class UserController {
             console.error("Failed to resend OTP:", mailError);
             res
               .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-              .json({ message: "Failed to send verification email." });
+              .json({status:false, message: "Failed to send verification email." } as CustomResponse<null>);
           }
           return;
         } else {
-          res.status(STATUS_CODES.CONFLICT).json({ message: "User already exists." });
+          res.status(STATUS_CODES.CONFLICT).json({ status:false, message: "User already exists." }as CustomResponse<null>);
           return;
         }
       }
@@ -66,31 +67,31 @@ class UserController {
         });
       } catch (mailError) {
         console.error("Failed to send OTP:", mailError);
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to send verification email." });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: "Failed to send verification email." } as CustomResponse<null>);
       }
     } catch (err: any) {
       console.error("Error during signup:", err);
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
+        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR } as CustomResponse<null>);
     }
   }
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
     const { otp, storedOTP, storedEmail } = req.body;
     if (!otp) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP is required" });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "OTP is required" } as CustomResponse<null>);
       return;
     }
 
     if (!otp || !storedOTP || !storedEmail) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ message: "OTP Timeout. Try again" });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "OTP Timeout. Try again" } as CustomResponse<null>);
       return;
     }
     if (storedOTP === otp) {
       const currentUser = await this.userService.getUserByEmail(storedEmail);
       if (!currentUser) {
-        res.status(STATUS_CODES.NOT_FOUND).json({ message: "User not found" });
+        res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "User not found" } as CustomResponse<null>);
         return;
       }
 
@@ -103,12 +104,12 @@ class UserController {
       if (updateUser) {
         res
           .status(STATUS_CODES.OK)
-          .json({ message: "OTP verified successfully", user: updateUser });
+          .json({status:false, message: "OTP verified successfully", data: updateUser } as CustomResponse<UserType>);
       } else {
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.UPDATION_FAILED });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: ERROR_MESSAGES.UPDATION_FAILED } as CustomResponse<null>);
       }
     } else {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Incorrect OTP. Please try again" });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Incorrect OTP. Please try again" } as CustomResponse<null>);
     }
   }
 
@@ -119,10 +120,10 @@ class UserController {
       res
         .status(STATUS_CODES.BAD_REQUEST)
         .json({
-          success: false,
+          status: false,
           message: "Email and password required",
           data: null,
-        });
+        } as CustomResponse<null>);
       return;
     }
 
@@ -132,10 +133,10 @@ class UserController {
         res
           .status(STATUS_CODES.UNAUTHORIZED)
           .json({
-            success: false,
+            status: false,
             message: "User not found. Please sign up.",
             data: null,
-          });
+          } as CustomResponse<null>);
         return;
       }
 
@@ -143,17 +144,17 @@ class UserController {
         res
           .status(STATUS_CODES.FORBIDDEN)
           .json({
-            success: false,
+            status: false,
             message: "Password not set for this account",
             data: null,
-          });
+          } as CustomResponse<null>);
         return;
       }
 
       if (!existUser.status) {
         res
           .status(STATUS_CODES.FORBIDDEN)
-          .json({ success: false, message: "Account is blocked", data: null });
+          .json({ status: false, message: "Account is blocked", data: null } as CustomResponse<null>);
         return;
       }
 
@@ -166,10 +167,10 @@ class UserController {
         res
           .status(STATUS_CODES.UNAUTHORIZED)
           .json({
-            success: false,
+            status: false,
             message: "Invalid email or password",
             data: null,
-          });
+          } as CustomResponse<null>);
         return;
       }
 
@@ -194,17 +195,17 @@ class UserController {
       };
 
       res.status(STATUS_CODES.OK).json({
-        success: true,
+        status: true,
         message: "Login successful",
         data: { accessToken, refreshToken, user: filteredData },
-      });
+      } as CustomResponse<{accessToken: string,user:{}}>);
     } catch (error) {
       console.error("Login Error:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        success: false,
+        status: false,
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
         data: null,
-      });
+      }as CustomResponse<null> );
     }
   }
 
@@ -213,19 +214,19 @@ class UserController {
     if (!email) {
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, messgae: ERROR_MESSAGES.INVALID_INPUT });
+        .json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT } as CustomResponse<null>);
       return;
     }
     const getUserData = await this.userService.findByEmail(email);
     if (!getUserData) {
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, messgae: "user not found. please signup" });
+        .json({ status: false, message: "user not found. please signup" } as CustomResponse<null>);
       return;
-    } else if (getUserData.status !== 1) {
+    } else if (getUserData.status !== 1) { 
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .json({ status: false, messgae: "Your account is blocked." });
+        .json({ status: false, message: "Your account is blocked." } as CustomResponse<null>);
       return;
     }
     const otp = await OtpUtility.otpGenerator();
@@ -241,21 +242,21 @@ class UserController {
           status: true,
           message: "An OTP is send to your email",
           data: { email, otp },
-        });
+        } as CustomResponse<{email: string,otp:number}>);
       return;
     } else
       res
         .status(STATUS_CODES.BAD_REQUEST)
         .json({
           status: false,
-          messgae: "not able to generate OTP. Please try again",
-        });
+          message: "not able to generate OTP. Please try again",
+        } as CustomResponse<null>);
   }
 
   async updatePassword(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT } as CustomResponse<null>);
       return;
     }
     try {
@@ -266,7 +267,7 @@ class UserController {
           .json({ status: false, message: "user not exist. please signup" });
         return;
       } else if (existUser.status !== 1) {
-        res.status(STATUS_CODES.FORBIDDEN).json({ status: false, message: "user is blocked" });
+        res.status(STATUS_CODES.FORBIDDEN).json({ status: false, message: "user is blocked" } as CustomResponse<null>);
         return;
       }
       const hashPassword = (await PasswordUtils.passwordHash(
@@ -280,21 +281,21 @@ class UserController {
       if (updateUser)
         res
           .status(STATUS_CODES.OK)
-          .json({ status: true, message: "password updated sucessfully" });
+          .json({ status: true, message: "password updated sucessfully" } as CustomResponse<null>);
       else
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ status: false, message: "unable to update password" });
+          .json({ status: false, message: "unable to update password" } as CustomResponse<null>);
     } catch (error) {
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
+        .json({ status: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR } as CustomResponse<null>);
     }
   }
   async googleSinup(req: Request, res: Response): Promise<void> {
     const { name, email, image } = await req.body;
     if (!email) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: ERROR_MESSAGES.INVALID_INPUT } as CustomResponse<null>);
       return;
     } 
     try {
@@ -305,7 +306,7 @@ class UserController {
     }
 
     if(!userData || userData.status!==1){
-      res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"account is blocked "})
+      res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message:"account is blocked "} as CustomResponse<null>)
       return;
     }
     const accessToken = JwtUtility.generateAccessToken({
@@ -324,7 +325,7 @@ class UserController {
     });
     res.status(STATUS_CODES.OK).json({status:true, message:"signup successfull", data:{userData,token: accessToken}})
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
   }
 
@@ -332,14 +333,14 @@ class UserController {
     const userId = req.id
     try {
       if(!userId){
-        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED})
+        res.status(STATUS_CODES.BAD_REQUEST).json({status: false, message:ERROR_MESSAGES.UNAUTHORIZED} as CustomResponse<null>)
         return
       }
       const totalPost = await this.userService.getPostCount(userId)
       const meetingData = await this.userService.getMeetingDetails(userId)
       res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucessfull", data : {...totalPost,...meetingData}})
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
   }
 
@@ -348,7 +349,7 @@ class UserController {
       const data = await this.userService.getAllTechnologies()
       res.status(STATUS_CODES.OK).json({status: true, message:"data fetched sucssfully", data})
     } catch (error) {
-      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR})
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status: false, message:ERROR_MESSAGES.INTERNAL_SERVER_ERROR} as CustomResponse<null>)
     }
   }
 
@@ -357,10 +358,10 @@ class UserController {
       const refreshToken = req.cookies.userRefreshToken;
       if (!refreshToken) {
         res.status(STATUS_CODES.UNAUTHORIZED).json({
-          success: false,
+          status: false,
           message: 'Refresh token not found',
           data: null,
-        });
+        } as CustomResponse<null>);
         return;
       }
   
@@ -387,27 +388,27 @@ class UserController {
   
         // Return the new access token to the client
         res.status(STATUS_CODES.OK).json({
-          success: true,
+          status: true,
           message: 'Token refreshed successfully',
           data: {
             accessToken,
           },
-        });
+        } as CustomResponse<{accessToken:string}>);
       } catch (tokenError) {
         // Token verification failed
         res.status(STATUS_CODES.UNAUTHORIZED).json({
-          success: false,
+          status: false,
           message: 'Invalid refresh token',
           data: null,
-        });
+        } as CustomResponse<null>);
       }
     } catch (error) {
       console.error('Refresh Token Error:', error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        success: false,
+        status: false,
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
         data: null,
-      });
+      } as CustomResponse<null>);
     }
   }
   
