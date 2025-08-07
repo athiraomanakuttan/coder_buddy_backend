@@ -1,18 +1,20 @@
-import { count } from "console";
 import Meeting, { MeetingType } from "../../../model/admin/meetingModel";
 import { MeetingUser } from "../../../model/shared/meeting.model";
 import { MeetingReportType } from "../../../types/type";
 import IMeetingRepository from "../../expert/meetingRepository";
+import { BaseRepository } from "../../base";
 
-class MeetingRepositoryImplimentation implements IMeetingRepository{
+class MeetingRepositoryImplimentation extends BaseRepository<MeetingType> implements IMeetingRepository {
+    constructor() {
+        super(Meeting);
+    }
 
     async getAdminExpertMeeting(id: string): Promise<MeetingType | null> {
-        const meetingDetails = await Meeting.findOne({userId:id,status:0})
-        return meetingDetails;
+        return await this.findOne({ userId: id, status: 0 });
     }
+
     async verifymeeting(meetingId: string): Promise<MeetingType | null> {
-        const meetingData =  await Meeting.findOne({meetingId:meetingId,status:0})
-        return meetingData;
+        return await this.findOne({ meetingId: meetingId, status: 0 });
     }
 
     async getMeetingReport(expertId: string): Promise<MeetingReportType | null> {
@@ -20,39 +22,36 @@ class MeetingRepositoryImplimentation implements IMeetingRepository{
             { $match: { expertId } },
             { $group: { _id: "$status", count: { $sum: 1 } } }
         ]);
-    
+
         let totalMeetings = 0;
         let scheduledMeeting = 0;
-        
+
         meetingData.forEach(({ _id, count }) => {
-            
-            if (_id === 0)  scheduledMeeting = count;
-            
-            if(_id === 1) totalMeetings += count;
+            if (_id === 0) scheduledMeeting = count;
+            if (_id === 1) totalMeetings += count;
         });
-    
+
         return { totalMeetings, scheduledMeeting };
     }
 
     async getExpertRating(expertId: string): Promise<number | null> {
         const result = await MeetingUser.aggregate([
-          { $match: { expertId } },
-          { $unwind: "$rating" },
-          { 
-            $match: { 
-              $expr: { $eq: ["$rating.userId", "$userId"] } 
-            } 
-          },
-          { 
-            $group: { 
-              _id: null, 
-              avgRating: { $avg: "$rating.participantBehavior" }
-            } 
-          }
+            { $match: { expertId } },
+            { $unwind: "$rating" },
+            {
+                $match: {
+                    $expr: { $eq: ["$rating.userId", "$userId"] }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgRating: { $avg: "$rating.participantBehavior" }
+                }
+            }
         ]);
-      
         return result.length > 0 ? result[0].avgRating : null;
-      }
-      
+    }
 }
-export default MeetingRepositoryImplimentation
+
+export default MeetingRepositoryImplimentation;

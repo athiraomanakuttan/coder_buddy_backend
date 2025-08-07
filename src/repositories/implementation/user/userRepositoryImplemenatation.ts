@@ -5,29 +5,44 @@ import Expert , { ExpertDocument } from "../../../model/expert/expertModel";
 import { MeetingCountType, MonthlyUserPostReportType, PostCountType } from "../../../types/type";
 import { MeetingUser } from "../../../model/shared/meeting.model";
 import { Technology, TechnologyType } from "../../../model/admin/technology";
+import { BaseRepository } from "../../base";
 
-class UserRepositoryImplementation implements IUserRepository{
+class UserRepositoryImplementation extends BaseRepository<UserType> implements IUserRepository{
+    constructor() {
+        super(User);
+    }
+
+    // Override base methods to maintain existing interface
     async createUser(user: UserType): Promise<UserType> {
-        const newUser = await User.create(user)
-        return newUser
+        return await this.create(user);
     }
+
     async findByEmail(email: String): Promise<UserType | null> {
-        const getUser = await User.findOne({email :  email});
-        return getUser;
+        return await super.findByEmail(email.toString());
     }
+
     async updateUserByEmail(email: string, data: UserType): Promise<UserType | null> {
-        const updatedUser = await User.findOneAndUpdate({ email }, data, { new: true });
-        return updatedUser;
+        return await super.updateByEmail(email, data);
     }
+
     async getUserByEmail(email: string): Promise<UserType | null> {
-        return await User.findOne({ email });
+        return await super.findByEmail(email);
     }
+
     async findById(userId: string): Promise<UserType | null> {
-        return await User.findOne({_id:userId})
+        return await super.findById(userId);
     }
-    async updateById(userId: String, user: UserType): Promise<UserType | string | null> {
-        return await User.findOneAndUpdate({_id:userId},user,{new : true})
+
+    // This matches the base repository exactly
+    async updateById(id: string, data: Partial<UserType>): Promise<UserType | null> {
+        return await super.updateById(id, data);
     }
+
+    // Custom method for interface compatibility
+    async updateUserById(userId: string, user: UserType): Promise<UserType | null> {
+        return await this.updateById(userId, user);
+    }
+
     async uploadPost(data: PostType): Promise<PostType | null> {
         const uploadPost = await Post.create(data)
         return uploadPost
