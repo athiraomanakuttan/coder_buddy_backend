@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 class PaymentRepositoryImplimentation extends BaseRepository<PaymentType> implements IPaymentRepository {
     constructor() {
         super(Payment);
-    }
+    } 
 
     async createPayment(title: string, amount: number, userId: string, expertId: string, postId: string): Promise<PaymentType | null> {
         return await Payment.create({

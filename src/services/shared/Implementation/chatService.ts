@@ -1,4 +1,4 @@
-import { ChatListResponse, ChatType, ParticipentsType } from "../../../model/shared/chat.model"
+import {  ChatType, ParticipentsType } from "../../../model/shared/chat.model"
 import { ConversationType } from "../../../model/shared/message.model"
 import { PostType } from "../../../model/user/postModel"
 import ChatRepository from "../../../repositories/shared/chatRepositories"

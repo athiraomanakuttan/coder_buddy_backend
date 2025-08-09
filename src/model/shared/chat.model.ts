@@ -1,60 +1,55 @@
-// chat.model.ts
-import mongoose from "mongoose";
+import mongoose, { Document, Schema, model } from "mongoose";
 import { PostType } from "../user/postModel";
 
+// Participant definition
 export type ParticipentsType = {
-    id: string,
-    role: string,
-    name: string,
-    profile_pic: string
+  id: string;
+  role: string;
+  name: string;
+  profile_pic: string;
+};
+
+// 1. Schema shape (just the fields)
+export interface ChatSchemaType {
+  participents: ParticipentsType[];
+  postId: mongoose.Types.ObjectId | string;
+  messages: mongoose.Types.ObjectId[] | string[];
 }
 
-export type ChatType = {
-    _id?:mongoose.Types.ObjectId,
-    participents: ParticipentsType[],
-    postId:mongoose.Types.ObjectId | string,
-    messages: mongoose.Types.ObjectId[] | string[],
-    createdAt?: Date,
-    updatedAt?: Date
-}
-export type ChatListResponse = {
-    chatId: string;
-    participant: ParticipentsType;
-    postData ?:  PostType | null
-    lastMessageAt: Date;
+// 2. Full document type used in the model (includes createdAt/updatedAt from timestamps)
+ interface ChatType extends ChatSchemaType, Document {
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const chatSchema = new mongoose.Schema({
-    participents: [{
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true
-        },
-        role: {
-            type: String,
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        profile_pic: {
-            type: String,
-            required: true
-        }
-    }],
-    postId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Post',
-        required: true
+// 3. Schema definition
+const chatSchema = new Schema<ChatType>(
+  {
+    participents: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId, required: true },
+        role: { type: String, required: true },
+        name: { type: String, required: true },
+        profile_pic: { type: String, required: true },
+      },
+    ],
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+      required: true,
     },
-    messages: [{
+    messages: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'message',
-        required: true
-    }]
-}, { timestamps: true })
+        ref: "message",
+        required: true,
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
-const Chat = mongoose.model('chats', chatSchema)
+// 4. Model definition
+const Chat = model<ChatType>("chats", chatSchema);
 
-export { Chat };
+export { Chat, ChatType };

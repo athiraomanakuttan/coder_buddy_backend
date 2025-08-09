@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 class MeetingRepositoryImplimentation extends BaseRepository<MeetingUserType> implements IMeetingRepositories {
     constructor() {
-        super(MeetingUser);
+        super(MeetingUser); 
     }
 
     async createMeeting(title: string, meetingDate: string, expertId: string, userId: string, postId: string): Promise<MeetingUserType | null> {

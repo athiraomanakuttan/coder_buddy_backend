@@ -3,7 +3,7 @@ import { Conversation, ConversationType } from "../../../model/shared/message.mo
 import IChatRepository from "../../shared/chatRepositories";
 import { BaseRepository } from "../../base";
 
-class ChatRepositoryImplimenation extends BaseRepository<ChatType> implements IChatRepository {
+class ChatRepositoryImplimenation extends BaseRepository<ChatType> implements IChatRepository { 
     constructor() {
         super(Chat);
     }
@@ -12,7 +12,6 @@ class ChatRepositoryImplimenation extends BaseRepository<ChatType> implements IC
         const chatData = await Chat.find({ 'participents.id': participentId })
             .populate("postId")
             .sort({ updatedAt: -1 })
-            .lean();
         return chatData;
     }
 
@@ -44,7 +43,7 @@ class ChatRepositoryImplimenation extends BaseRepository<ChatType> implements IC
     }
 
     async getChatDetails(chatId: string): Promise<ChatType | null> {
-        const chatDetails = await Chat.findById({ _id: chatId }).populate('messages').lean();
+        const chatDetails = await Chat.findById({ _id: chatId }).populate('messages');
         if (!chatDetails) return null;
         return chatDetails;
     }
@@ -56,7 +55,6 @@ class ChatRepositoryImplimenation extends BaseRepository<ChatType> implements IC
             }, postId: postId
         })
             .sort({ updatedAt: -1 })
-            .lean();
         return chatData;
     }
 }

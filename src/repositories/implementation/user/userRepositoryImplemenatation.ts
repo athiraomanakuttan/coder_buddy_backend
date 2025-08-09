@@ -11,8 +11,7 @@ class UserRepositoryImplementation extends BaseRepository<UserType> implements I
     constructor() {
         super(User);
     }
-
-    // Override base methods to maintain existing interface
+    
     async createUser(user: UserType): Promise<UserType> {
         return await this.create(user);
     }
