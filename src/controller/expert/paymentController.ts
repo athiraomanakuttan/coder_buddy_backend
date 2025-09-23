@@ -149,7 +149,7 @@ class PaymentController{
             }
     
             res.status(STATUS_CODES.OK).json({
-                status: false,
+                status: true,
                 message: SUCESS_MESSAGE.PAYMENT_VERIFIED
             } as  CustomResponse<null>);
         } else {

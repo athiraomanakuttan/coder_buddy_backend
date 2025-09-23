@@ -41,7 +41,7 @@ class PaymentRepositoryImplimentation extends BaseRepository<PaymentType> implem
     }
 
     async getPaymentById(paymentId: string): Promise<PaymentType | null> {
-        return await this.findById(paymentId);
+        return await this.findOne({_id:paymentId, status:0});
     }
 
     async updatePaymentById(paymentId: string, status: number, razorpayId: string | null): Promise<PaymentType | null> {
