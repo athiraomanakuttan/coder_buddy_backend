@@ -15,7 +15,7 @@ class MeetingRepositoryImplimentation extends BaseRepository<MeetingUserType> im
             meetingDate: new Date(meetingDate),
             expertId,
             userId,
-            postId: new mongoose.Schema.Types.ObjectId(postId)
+            postId: new mongoose.Types.ObjectId(postId)
         });
     }
 

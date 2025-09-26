@@ -77,6 +77,7 @@ class UserRepositoryImplementation extends BaseRepository<UserType> implements I
     
         try {
             const postDetails = await Post.aggregate([
+                { $sort: {updatedAt:-1} },
                 { $match: searchConditions },
                 
                 { $skip: skip },

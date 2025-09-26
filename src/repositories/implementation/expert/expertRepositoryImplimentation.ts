@@ -35,6 +35,7 @@ class ExpertRepositoryImplementation extends BaseRepository<ExpertDocument> impl
                 : { technologies: { $in: skillSet }, status: 0 };
 
             const postData = await Post.aggregate([
+                {$sort : {updatedAt: -1}},
                 { $match: matchCondition },
                 { $skip: skip },
                 { $limit: limit },

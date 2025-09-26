@@ -32,7 +32,8 @@ class PostController {
         res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message:  ERROR_MESSAGES.UNAUTHORIZED }as CustomResponse<null>);
         return
     }
-      const posts = await this.postService.fetchPosts(Number(page), Number(limit) , expertDetails.skills ?expertDetails.skills : null );
+      const posts = await this.postService.fetchPosts(Number(page), Number(limit) , expertDetails.skills ? expertDetails.skills : null );
+      console.log("expertDetails", posts)
       const totalPost = await this.postService.getPostCount({status:0,technologies: { $in: expertDetails.skills }})
       const pageCount = Math.ceil(totalPost / Number(limit))
         if(posts){
