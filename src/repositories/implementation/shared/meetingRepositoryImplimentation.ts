@@ -13,7 +13,7 @@ class MeetingRepositoryImplimentation extends BaseRepository<MeetingUserType> im
         return await MeetingUser.create({
             title,
             meetingDate: new Date(meetingDate),
-            expertId,
+            expertId, 
             userId,
             postId: new mongoose.Types.ObjectId(postId)
         });
