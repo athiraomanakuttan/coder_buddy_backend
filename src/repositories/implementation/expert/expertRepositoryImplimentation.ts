@@ -35,8 +35,9 @@ class ExpertRepositoryImplementation extends BaseRepository<ExpertDocument> impl
                 : { technologies: { $in: skillSet }, status: 0 };
 
             const postData = await Post.aggregate([
-                {$sort : {updatedAt: -1}},
+                
                 { $match: matchCondition },
+                {$sort : {updatedAt: -1}},
                 { $skip: skip },
                 { $limit: limit },
                 {
@@ -68,32 +69,36 @@ class ExpertRepositoryImplementation extends BaseRepository<ExpertDocument> impl
                     }
                 },
                 {
-                    $group: {
-                        _id: "$_id",
-                        title: { $first: "$title" },
-                        description: { $first: "$description" },
-                        userId: { $first: "$userId" },
-                        technologies: { $first: "$technologies" },
-                        uploads: { $first: "$uploads" },
-                        status: { $first: "$status" },
-                        comments: {
-                            $push: {
-                                $cond: {
-                                    if: { $ne: ["$comments", null] },
-                                    then: {
-                                        _id: "$comments._id",
-                                        comment: "$comments.comment",
-                                        status: "$comments.status",
-                                        date: "$comments.date",
-                                        expertId: "$comments.expertId",
-                                        expertName: { $ifNull: ["$expertDetails.first_name", null] }
-                                    },
-                                    else: "$$REMOVE"
-                                }
-                            }
-                        }
-                    }
-                },
+  $group: {
+    _id: "$_id",
+    title: { $first: "$title" },
+    description: { $first: "$description" },
+    userId: { $first: "$userId" },
+    technologies: { $first: "$technologies" },
+    uploads: { $first: "$uploads" },
+    status: { $first: "$status" },
+    createdAt: { $first: "$createdAt" },   // keep timestamp
+    updatedAt: { $first: "$updatedAt" },
+    comments: {
+      $push: {
+        $cond: {
+          if: { $ne: ["$comments", null] },
+          then: {
+            _id: "$comments._id",
+            comment: "$comments.comment",
+            status: "$comments.status",
+            date: "$comments.date",
+            expertId: "$comments.expertId",
+            expertName: { $ifNull: ["$expertDetails.first_name", null] }
+          },
+          else: "$$REMOVE"
+        }
+      }
+    }
+  }
+},
+{ $sort: { updatedAt: -1 } },   // ✅ re-sort after grouping
+
                 {
                     $project: {
                         _id: 1,
